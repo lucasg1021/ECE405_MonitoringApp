@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Environment Monitoring</string>
-    <string name="currTempLabel">Current Temperature (F): </string>
-    <string name="setTempLabel">Set Temperature (F): </string>
-    <string name="currHumidLabel">Current Humidity (%): </string>
-    <string name="setHumidLabel">Set Humidity (%): </string>
+    <string name="currTempLabel">Current Temperature</string>
+    <string name="setTempLabel">Set Temperature</string>
+    <string name="currHumidLabel">Current Humidity</string>
+    <string name="setHumidLabel">Set Humidity</string>
+    <string name="setTempValue">70°F</string>
+    <string name="setHumidValue">50%</string>
+    <string name="degF">°F</string>
 </resources>
