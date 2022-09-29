@@ -4,17 +4,26 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-
-
+import android.util.Log;
 import android.os.Bundle;
 
 import org.w3c.dom.Text;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
+import java.net.Socket;
 
 @SuppressLint("ApplySharedPref")    // suppress "apply() instead of commit()" warning
 
@@ -29,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
         setTempValue = settings.getInt("currentSetTemp", 70);
         setHumidValue = settings.getInt("currentSetHumid", 50);
@@ -107,5 +115,49 @@ public class MainActivity extends AppCompatActivity {
 
         // display
         ((TextView)findViewById(R.id.setHumid)).setText(output);
+    }
+
+    public void pingIP(View v) {
+        try {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                    .permitAll().build();
+
+            StrictMode.setThreadPolicy(policy);
+
+            int timeoutMs = 2000;
+            Socket sock = new Socket();
+            SocketAddress sockaddr = new InetSocketAddress("23.127.196.133", 54321);
+
+            sock.connect(sockaddr, timeoutMs);
+            sock.close();
+            Log.i("CONNECTION STATUS:", "connected");
+
+        } catch (IOException ioException) {
+            Log.i("CONNECTION STATUS:", "disconnected");
+        }
+//
+//        try {
+//            int timeout = 2000;
+//
+//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//            StrictMode.setThreadPolicy(policy);
+//
+//            Socket socket = new Socket();
+//            socket.connect(new InetSocketAddress("23.127.196.133", 54321), timeout);
+//
+//            OutputStream out = socket.getOutputStream();
+//            PrintWriter output = new PrintWriter(out);
+//
+//            Log.i("CONNECTION STATUS", "sending...");
+//            output.println("Hello from Android");
+//            output.flush();
+//            Log.i("CONNECTION STATUS", "sent");
+//
+//            socket.close();
+//        }
+//        catch (IOException ioException){
+//            Log.i("CONNECTION STATUS", "disconnected");
+//        }
+
     }
 }
