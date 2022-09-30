@@ -3,9 +3,12 @@ package com.example.monitoring_system;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +19,9 @@ import android.os.Bundle;
 
 import org.w3c.dom.Text;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -118,46 +123,61 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void pingIP(View v) {
-        try {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                    .permitAll().build();
-
-            StrictMode.setThreadPolicy(policy);
-
-            int timeoutMs = 2000;
-            Socket sock = new Socket();
-            SocketAddress sockaddr = new InetSocketAddress("23.127.196.133", 54321);
-
-            sock.connect(sockaddr, timeoutMs);
-            sock.close();
-            Log.i("CONNECTION STATUS:", "connected");
-
-        } catch (IOException ioException) {
-            Log.i("CONNECTION STATUS:", "disconnected");
-        }
-//
 //        try {
-//            int timeout = 2000;
+//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+//                    .permitAll().build();
 //
-//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 //            StrictMode.setThreadPolicy(policy);
 //
-//            Socket socket = new Socket();
-//            socket.connect(new InetSocketAddress("23.127.196.133", 54321), timeout);
+//            int timeoutMs = 2000;
+//            Socket sock = new Socket();
+//            SocketAddress sockaddr = new InetSocketAddress("23.127.196.133", 54321);
 //
-//            OutputStream out = socket.getOutputStream();
-//            PrintWriter output = new PrintWriter(out);
+//            sock.connect(sockaddr, timeoutMs);
+//            sock.close();
+//            Log.i("CONNECTION STATUS:", "connected");
 //
-//            Log.i("CONNECTION STATUS", "sending...");
-//            output.println("Hello from Android");
-//            output.flush();
-//            Log.i("CONNECTION STATUS", "sent");
-//
-//            socket.close();
+//        } catch (IOException ioException) {
+//            Log.i("CONNECTION STATUS:", "disconnected");
 //        }
-//        catch (IOException ioException){
-//            Log.i("CONNECTION STATUS", "disconnected");
-//        }
+//
+        try {
+            int timeout = 2000;
+
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress("23.127.196.133", 54321), timeout);
+
+            OutputStream out = socket.getOutputStream();
+            PrintWriter output = new PrintWriter(out);
+
+            Log.i("CONNECTION STATUS", "sending...");
+            output.println("Hello from Android");
+            output.flush();
+            Log.i("CONNECTION STATUS", "sent");
+
+            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            String message = null;
+
+            while(true) {
+
+                message = input.readLine();
+
+                if(message != null){
+                    break;
+                }
+            }
+
+            Log.i("MESSAGE RECEIVED", message);
+
+
+            socket.close();
+        }
+        catch (IOException ioException){
+            Log.i("CONNECTION STATUS", "disconnected");
+        }
 
     }
 }
