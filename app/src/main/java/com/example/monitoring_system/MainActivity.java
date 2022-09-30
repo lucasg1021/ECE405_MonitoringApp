@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.StrictMode;
@@ -12,6 +13,7 @@ import android.text.format.Formatter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.util.Log;
@@ -39,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private int setTempValue, setHumidValue;
     TextView tTemp, tHumid;
 
+    private Button menuTwo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +53,21 @@ public class MainActivity extends AppCompatActivity {
 
         tTemp = findViewById(R.id.setTemp);
         tHumid = findViewById(R.id.setHumid);
+
+        menuTwo = (Button) findViewById(R.id.switchButton);
+        menuTwo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openActivity2();
+            }
+        });
     }
+
+    public void openActivity2(){
+        Intent intent = new Intent(this, Activity2.class );
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onStart(){
