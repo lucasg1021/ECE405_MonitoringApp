@@ -8,8 +8,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
-        android:layout_width="334dp"
-        android:layout_height="80dp"
+        android:layout_width="355dp"
+        android:layout_height="226dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.652"
@@ -19,8 +19,8 @@
 
         <TextView
             android:id="@+id/textViewCurrTempLabel"
-            android:layout_width="160dp"
-            android:layout_height="59dp"
+            android:layout_width="161dp"
+            android:layout_height="31dp"
             android:text="@string/currTempLabel"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -32,16 +32,48 @@
 
         <TextView
             android:id="@+id/textViewCurrHumidLabel"
-            android:layout_width="129dp"
-            android:layout_height="57dp"
+            android:layout_width="142dp"
+            android:layout_height="33dp"
             android:text="@string/currHumidLabel"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.926"
+            app:layout_constraintHorizontal_bias="0.924"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.215" />
+            app:layout_constraintVertical_bias="0.212" />
+
+        <TextView
+            android:id="@+id/currTemp"
+            android:layout_width="115dp"
+            android:layout_height="63dp"
+            android:text="@string/currTempValue"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.141"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.453" />
+
+        <TextView
+            android:id="@+id/currHumid"
+            android:layout_width="112dp"
+            android:layout_height="60dp"
+            android:text="@string/currHumidValue"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.86"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.445" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -163,19 +195,6 @@
             app:srcCompat="@android:drawable/arrow_down_float" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/buttonTest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="pingIP"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.528" />
 
     <Button
         android:id="@+id/switchButton"

@@ -6,7 +6,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.icu.lang.UCharacter;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.format.Formatter;
@@ -31,6 +33,9 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.net.Socket;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @SuppressLint("ApplySharedPref")    // suppress "apply() instead of commit()" warning
 
@@ -39,9 +44,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String PREFS = "MyPrefs";
 
     private int setTempValue, setHumidValue;
+    private float currTempValue, currHumidValue;
     TextView tTemp, tHumid;
 
     private Button menuTwo;
+
+    ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +69,23 @@ public class MainActivity extends AppCompatActivity {
                 openActivity2();
             }
         });
+
+        scheduledTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                tcpRunnable runnable = new tcpRunnable();
+                new Thread(runnable).start();
+            }
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
-    public void openActivity2(){
-        Intent intent = new Intent(this, Activity2.class );
+    public void openActivity2() {
+        Intent intent = new Intent(this, Activity2.class);
         startActivity(intent);
     }
 
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
 
         String outputTemp = setTempValue + "°F";
@@ -80,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         tHumid.setText(outputHumid);
     }
 
-    public void increaseSetTemp(View v){
+    public void increaseSetTemp(View v) {
         // update temperature and save to preferences
         setTempValue++;
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
@@ -92,10 +107,10 @@ public class MainActivity extends AppCompatActivity {
         String output = setTempValue + "°F";
 
         // display
-        ((TextView)findViewById(R.id.setTemp)).setText(output);
+        ((TextView) findViewById(R.id.setTemp)).setText(output);
     }
 
-    public void decreaseSetTemp(View v){
+    public void decreaseSetTemp(View v) {
         // update temperature and save to preferences
         setTempValue -= 1;
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
@@ -107,10 +122,10 @@ public class MainActivity extends AppCompatActivity {
         String output = setTempValue + "°F";
 
         // display
-        ((TextView)findViewById(R.id.setTemp)).setText(output);
+        ((TextView) findViewById(R.id.setTemp)).setText(output);
     }
 
-    public void increaseSetHumid(View v){
+    public void increaseSetHumid(View v) {
         // update humidity and save to preferences
         setHumidValue++;
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
@@ -122,10 +137,10 @@ public class MainActivity extends AppCompatActivity {
         String output = setHumidValue + "%";
 
         // display
-        ((TextView)findViewById(R.id.setHumid)).setText(output);
+        ((TextView) findViewById(R.id.setHumid)).setText(output);
     }
 
-    public void decreaseSetHumid(View v){
+    public void decreaseSetHumid(View v) {
         // update humidity and save to preferences
         setHumidValue -= 1;
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
@@ -137,65 +152,61 @@ public class MainActivity extends AppCompatActivity {
         String output = setHumidValue + "%";
 
         // display
-        ((TextView)findViewById(R.id.setHumid)).setText(output);
+        ((TextView) findViewById(R.id.setHumid)).setText(output);
     }
 
-    public void pingIP(View v) {
-//        try {
-//            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-//                    .permitAll().build();
-//
-//            StrictMode.setThreadPolicy(policy);
-//
-//            int timeoutMs = 2000;
-//            Socket sock = new Socket();
-//            SocketAddress sockaddr = new InetSocketAddress("23.127.196.133", 54321);
-//
-//            sock.connect(sockaddr, timeoutMs);
-//            sock.close();
-//            Log.i("CONNECTION STATUS:", "connected");
-//
-//        } catch (IOException ioException) {
-//            Log.i("CONNECTION STATUS:", "disconnected");
-//        }
-//
-        try {
-            int timeout = 2000;
+    class tcpRunnable implements Runnable {
 
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+        @Override
+        public void run() {
+            try {
+                int timeout = 2000;
 
-            Socket socket = new Socket();
-            socket.connect(new InetSocketAddress("23.127.196.133", 54321), timeout);
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
 
-            OutputStream out = socket.getOutputStream();
-            PrintWriter output = new PrintWriter(out);
+                Socket socket = new Socket();
+                socket.connect(new InetSocketAddress("23.127.196.133", 54321), timeout);
 
-            Log.i("CONNECTION STATUS", "sending...");
-            output.println("Hello from Android");
-            output.flush();
-            Log.i("CONNECTION STATUS", "sent");
+                OutputStream out = socket.getOutputStream();
+                PrintWriter output = new PrintWriter(out);
 
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            String message = null;
+                Log.i("CONNECTION STATUS", "sending...");
+                output.println("Hello from Android");
+                output.flush();
+                Log.i("CONNECTION STATUS", "sent");
 
-            while(true) {
+                BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                String message = null;
 
-                message = input.readLine();
+                long startTime = System.currentTimeMillis();
+                long endTime = startTime + 10000;
 
-                if(message != null){
-                    break;
+                while ((System.currentTimeMillis()-startTime) < endTime) {
+
+                    message = input.readLine();
+
+                    if (message != null) {
+                        break;
+                    }
                 }
+                Log.i("MESSAGE RECEIVED", message);
+
+//                socket.close()
+
+                if(message != null) {
+                    String tempS = message.substring(0, 5) + "°F";
+                    String humidS = message.substring(6) + "%";
+
+                    ((TextView) findViewById(R.id.currTemp)).setText(tempS);
+                    ((TextView) findViewById(R.id.currHumid)).setText(humidS);
+                }
+
+            } catch (IOException ioException) {
+//                Log.i("CONNECTION STATUS", "disconnected");
             }
-
-            Log.i("MESSAGE RECEIVED", message);
-
-
-            socket.close();
-        }
-        catch (IOException ioException){
-            Log.i("CONNECTION STATUS", "disconnected");
         }
 
     }
+
 }

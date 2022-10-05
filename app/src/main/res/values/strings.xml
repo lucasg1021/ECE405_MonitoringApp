@@ -6,5 +6,6 @@
     <string name="setHumidLabel">Set Humidity</string>
     <string name="setTempValue">70°F</string>
     <string name="setHumidValue">50%</string>
-    <string name="degF">°F</string>
+    <string name="currTempValue">°F</string>
+    <string name="currHumidValue">%</string>
 </resources>
