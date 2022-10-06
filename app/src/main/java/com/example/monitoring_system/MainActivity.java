@@ -28,11 +28,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 tcpRunnable runnable = new tcpRunnable();
                 new Thread(runnable).start();
             }
-        }, 0, 1000, TimeUnit.MILLISECONDS);
+        }, 0, 250, TimeUnit.MILLISECONDS);
     }
 
     public void openActivity2() {
@@ -155,6 +158,60 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.setHumid)).setText(output);
     }
 
+//    class tcpRunnable implements Runnable {
+//
+//        @Override
+//        public void run() {
+//            try {
+//                int timeout = 2000;
+//
+//                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//                StrictMode.setThreadPolicy(policy);
+//
+//                Socket socket = new Socket();
+//                socket.connect(new InetSocketAddress("23.127.196.133", 54321), timeout);
+//
+//                OutputStream out = socket.getOutputStream();
+//                PrintWriter output = new PrintWriter(out);
+//
+//                Log.i("CONNECTION STATUS", "sending...");
+//                output.println("Hello from Android");
+//                output.flush();
+//                Log.i("CONNECTION STATUS", "sent");
+//
+//                BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+//                String message = null;
+//
+//                long startTime = System.currentTimeMillis();
+//                long endTime = startTime + 10000;
+//
+//                while ((System.currentTimeMillis()-startTime) < endTime) {
+//
+//                    message = input.readLine();
+//
+//                    if (message != null) {
+//                        break;
+//                    }
+//                }
+//                Log.i("MESSAGE RECEIVED", message);
+//
+////                socket.close()
+//
+//                if(message != null) {
+//                    String tempS = message.substring(0, 5) + "°F";
+//                    String humidS = message.substring(6) + "%";
+//
+//                    ((TextView) findViewById(R.id.currTemp)).setText(tempS);
+//                    ((TextView) findViewById(R.id.currHumid)).setText(humidS);
+//                }
+//
+//            } catch (IOException ioException) {
+////                Log.i("CONNECTION STATUS", "disconnected");
+//            }
+//        }
+//
+//    }
+
     class tcpRunnable implements Runnable {
 
         @Override
@@ -165,34 +222,25 @@ public class MainActivity extends AppCompatActivity {
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
 
-                Socket socket = new Socket();
-                socket.connect(new InetSocketAddress("23.127.196.133", 54321), timeout);
+                String msgOut = "Hello from Android";
+                int msgLen = msgOut.length();
+                byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
 
-                OutputStream out = socket.getOutputStream();
-                PrintWriter output = new PrintWriter(out);
+                DatagramSocket socket = new DatagramSocket();
+                DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
 
-                Log.i("CONNECTION STATUS", "sending...");
-                output.println("Hello from Android");
-                output.flush();
-                Log.i("CONNECTION STATUS", "sent");
-
-                BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String message = null;
+                socket.setBroadcast(true);
+                socket.send(packet);
 
                 long startTime = System.currentTimeMillis();
                 long endTime = startTime + 10000;
 
-                while ((System.currentTimeMillis()-startTime) < endTime) {
+                byte[] msgIn = new byte[4096];
+                DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
+                socket.receive(packetIn);
 
-                    message = input.readLine();
-
-                    if (message != null) {
-                        break;
-                    }
-                }
+                String message = new String(msgIn, 0, packetIn.getLength());
                 Log.i("MESSAGE RECEIVED", message);
-
-//                socket.close()
 
                 if(message != null) {
                     String tempS = message.substring(0, 5) + "°F";
@@ -202,11 +250,15 @@ public class MainActivity extends AppCompatActivity {
                     ((TextView) findViewById(R.id.currHumid)).setText(humidS);
                 }
 
+                socket.close();
+
             } catch (IOException ioException) {
-//                Log.i("CONNECTION STATUS", "disconnected");
+                Log.i("CONNECTION STATUS", "disconnected");
             }
         }
 
     }
+
+
 
 }
