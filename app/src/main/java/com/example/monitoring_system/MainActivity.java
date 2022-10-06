@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 tcpRunnable runnable = new tcpRunnable();
                 new Thread(runnable).start();
             }
-        }, 0, 250, TimeUnit.MILLISECONDS);
+        }, 0, 5000, TimeUnit.MILLISECONDS);
     }
 
     public void openActivity2() {
