@@ -80,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
     // Notification code goes here
+
+
+
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,"My Notification");
             builder.setContentTitle("Enclosure Alert");
             builder.setContentText("Hello your temperature is low ");
@@ -198,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                 int msgLen = msgOut.length();
                 byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
                 DatagramSocket socket = new DatagramSocket();
-                DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
+                DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("146.163.53.188"), 54321);
                 socket.setBroadcast(true);
                 socket.send(packet);
                 long startTime = System.currentTimeMillis();
