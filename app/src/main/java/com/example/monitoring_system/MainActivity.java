@@ -33,12 +33,15 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 
 @SuppressLint("ApplySharedPref")    // suppress "apply() instead of commit()" warning
 
@@ -46,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
 
-    private int setTempValue, setHumidValue;
-    private float currTempValue, currHumidValue;
+    private int setTempValue, setHumidValue, pubMod, pubBase, privNum, sendB, key;
+    private int connection = 0;     // indicates whether connection has been established
     TextView tTemp, tHumid;
 
     private Button menuTwo;
@@ -73,12 +76,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        scheduledTaskExecutor.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                tcpRunnable runnable = new tcpRunnable();
-                new Thread(runnable).start();
-            }
-        }, 0, 250, TimeUnit.MILLISECONDS);
+        // if connection established and key shared, send requests for temp&humid data
+        if(connection != 0) {
+            scheduledTaskExecutor.scheduleAtFixedRate(new Runnable() {
+                public void run() {
+                    udpRunnable runnable = new udpRunnable();
+                    new Thread(runnable).start();
+                }
+            }, 0, 5000, TimeUnit.MILLISECONDS);
+        }
+        // else try to send encryption data to MCU
+        else {
+            scheduledTaskExecutor.scheduleAtFixedRate(new Runnable() {
+                public void run() {
+                    keyRunnable runnable = new keyRunnable();
+                    new Thread(runnable).start();
+                }
+            }, 0, 5000, TimeUnit.MILLISECONDS);
+
+        }
     }
 
     public void openActivity2() {
@@ -158,67 +174,11 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.setHumid)).setText(output);
     }
 
-//    class tcpRunnable implements Runnable {
-//
-//        @Override
-//        public void run() {
-//            try {
-//                int timeout = 2000;
-//
-//                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//                StrictMode.setThreadPolicy(policy);
-//
-//                Socket socket = new Socket();
-//                socket.connect(new InetSocketAddress("23.127.196.133", 54321), timeout);
-//
-//                OutputStream out = socket.getOutputStream();
-//                PrintWriter output = new PrintWriter(out);
-//
-//                Log.i("CONNECTION STATUS", "sending...");
-//                output.println("Hello from Android");
-//                output.flush();
-//                Log.i("CONNECTION STATUS", "sent");
-//
-//                BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-//                String message = null;
-//
-//                long startTime = System.currentTimeMillis();
-//                long endTime = startTime + 10000;
-//
-//                while ((System.currentTimeMillis()-startTime) < endTime) {
-//
-//                    message = input.readLine();
-//
-//                    if (message != null) {
-//                        break;
-//                    }
-//                }
-//                Log.i("MESSAGE RECEIVED", message);
-//
-////                socket.close()
-//
-//                if(message != null) {
-//                    String tempS = message.substring(0, 5) + "°F";
-//                    String humidS = message.substring(6) + "%";
-//
-//                    ((TextView) findViewById(R.id.currTemp)).setText(tempS);
-//                    ((TextView) findViewById(R.id.currHumid)).setText(humidS);
-//                }
-//
-//            } catch (IOException ioException) {
-////                Log.i("CONNECTION STATUS", "disconnected");
-//            }
-//        }
-//
-//    }
-
-    class tcpRunnable implements Runnable {
+    class udpRunnable implements Runnable {
 
         @Override
         public void run() {
             try {
-                int timeout = 2000;
-
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
 
@@ -237,26 +197,139 @@ public class MainActivity extends AppCompatActivity {
 
                 byte[] msgIn = new byte[4096];
                 DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
-                socket.receive(packetIn);
 
-                String message = new String(msgIn, 0, packetIn.getLength());
-                Log.i("MESSAGE RECEIVED", message);
+                socket.setSoTimeout(10000);
+                try {
+                    socket.receive(packetIn);
 
-                if(message != null) {
+                    String message = new String(msgIn, 0, packetIn.getLength());
+                    Log.i("MESSAGE RECEIVED", message);
+
                     String tempS = message.substring(0, 5) + "°F";
                     String humidS = message.substring(6) + "%";
 
                     ((TextView) findViewById(R.id.currTemp)).setText(tempS);
                     ((TextView) findViewById(R.id.currHumid)).setText(humidS);
                 }
+                catch(SocketTimeoutException e){
+//                    Log.i("TIMEOUT", "Timed out waiting for response");
+                }
 
                 socket.close();
 
             } catch (IOException ioException) {
-                Log.i("CONNECTION STATUS", "disconnected");
+//                Log.i("CONNECTION STATUS", "disconnected");
             }
         }
 
+    }
+
+    class keyRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            if (connection == 0) {
+                try {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+
+                    Integer mod = new Random().nextInt(21) + 10;     // public modulus, p, range 10-30
+                    Integer base = new Random().nextInt(9) + 1;
+
+                    String msgOut = mod + " " + base + " STARTUP";
+                    int msgLen = msgOut.length();
+                    byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
+
+                    DatagramSocket socket = new DatagramSocket();
+                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
+
+                    socket.setBroadcast(true);
+                    socket.send(packet);
+
+                    long startTime = System.currentTimeMillis();
+                    long endTime = startTime + 10000;
+
+                    byte[] msgIn = new byte[4096];
+                    DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
+
+                    socket.setSoTimeout(10000);
+                    try {
+                        socket.receive(packetIn);
+
+                        String message = new String(msgIn, 0, packetIn.getLength());
+                        Log.i("MESSAGE RECEIVED", message);
+
+                        if (message.equals("ACK")) {
+                            connection = 2;
+                            pubMod = mod;
+                            pubBase = base;
+                            privNum = new Random().nextInt(9) + 1;
+                            sendB = Math.toIntExact(Math.round(Math.pow(pubBase, privNum) % pubMod));
+                        }
+                    } catch (SocketTimeoutException e) {
+                        //                    Log.i("TIMEOUT", "Timed out waiting for response");
+                    }
+
+                    socket.close();
+
+                } catch (IOException ioException) {
+                    //                Log.i("CONNECTION STATUS", "disconnected");
+                }
+            }
+            else if(connection == 2){
+                try {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+
+                    String msgOut = sendB + " ENDSTARTUP";
+                    int msgLen = msgOut.length();
+                    byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
+
+                    DatagramSocket socket = new DatagramSocket();
+                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
+
+                    socket.setBroadcast(true);
+                    socket.send(packet);
+
+                    long startTime = System.currentTimeMillis();
+                    long endTime = startTime + 60000;
+
+                    byte[] msgIn = new byte[4096];
+                    DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
+
+                    socket.setSoTimeout(10000);
+                    try {
+                        socket.receive(packetIn);
+
+                        String message = new String(msgIn, 0, packetIn.getLength());
+                        Log.i("MESSAGE RECEIVED", message);
+
+                        if (message.contains("ACK")) {
+                            // remove non digits from string
+                            message = message.replaceAll("\\D+","");
+                            Integer A = Integer.parseInt(message);
+                            key = Math.toIntExact(Math.round(Math.pow(A, privNum) % pubMod));
+                            connection = 1;
+                            Log.i("KEY", String.valueOf(key));
+                            scheduledTaskExecutor.scheduleAtFixedRate(new Runnable() {
+                                public void run() {
+                                    udpRunnable runnable = new udpRunnable();
+                                    new Thread(runnable).start();
+                                }
+                            }, 0, 5000, TimeUnit.MILLISECONDS);
+                        }
+                    } catch (SocketTimeoutException e) {
+                        //                    Log.i("TIMEOUT", "Timed out waiting for response");
+                    }
+
+                    socket.close();
+
+                } catch (IOException ioException) {
+                    //                Log.i("CONNECTION STATUS", "disconnected");
+                }
+            }
+
+        }
     }
 
 
