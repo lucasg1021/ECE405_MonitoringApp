@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tTemp, tHumid;
     private Button menuTwo;
     ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(5);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -268,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } catch (SocketTimeoutException e) {
                         //                    Log.i("TIMEOUT", "Timed out waiting for response");
+                        connection = 0;
                     }
 
                     socket.close();
