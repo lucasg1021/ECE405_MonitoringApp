@@ -1,11 +1,18 @@
 package com.example.monitoring_system;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.icu.lang.UCharacter;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -46,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private int connection = 0;     // indicates whether connection has been established
     TextView tTemp, tHumid;
     private Button menuTwo;
+
+
     ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(5);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +65,36 @@ public class MainActivity extends AppCompatActivity {
         setHumidValue = settings.getInt("currentSetHumid", 50);
         tTemp = findViewById(R.id.setTemp);
         tHumid = findViewById(R.id.setHumid);
+
+        Button getNotified;
+
+        getNotified = findViewById(R.id.alertButton);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("My Notification","My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+
+        getNotified.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+    // Notification code goes here
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,"My Notification");
+            builder.setContentTitle("Enclosure Alert");
+            builder.setContentText("Hello your temperature is low ");
+            builder.setSmallIcon(R.drawable.ic_launcher_background);
+            builder.setAutoCancel(true);
+
+                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
+                managerCompat.notify(1,builder.build());
+
+            }
+        });
+
         menuTwo = (Button) findViewById(R.id.switchButton);
         menuTwo.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 openActivity2();
