@@ -309,7 +309,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } catch (SocketTimeoutException e) {
                         //                    Log.i("TIMEOUT", "Timed out waiting for response");
-                        connection = 0;
                     }
 
                     socket.close();
