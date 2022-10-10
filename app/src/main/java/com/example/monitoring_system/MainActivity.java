@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(5);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
