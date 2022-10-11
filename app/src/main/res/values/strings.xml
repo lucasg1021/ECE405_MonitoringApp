@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Environment Monitoring</string>
     <string name="currTempLabel">Current Temperature</string>
+    <string name="ipstring"></string>
     <string name="setTempLabel">Set Temperature</string>
     <string name="currHumidLabel">Current Humidity</string>
     <string name="setHumidLabel">Set Humidity</string>

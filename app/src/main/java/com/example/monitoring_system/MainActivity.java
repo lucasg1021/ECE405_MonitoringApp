@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
     private int setTempValue, setHumidValue, pubMod, pubBase, privNum, sendB, key;
-    private int connection = 0;     // indicates whether connection has been established
+    private int connection = 1;     // indicates whether connection has been established
     TextView tTemp, tHumid;
     private Button menuTwo;
 
@@ -196,13 +196,23 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
+
+                String IpAddress = "";
+
+                SharedPreferences settings = getSharedPreferences(Activity2.PREFSTwo,0);
+                IpAddress = settings.getString("ipstring","");
+
+                //SharedPreferences.Editor editor = settings.edit();
+                //editor.putString("ipstring", IpAddress);
+                //editor.commit();
+
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
                 String msgOut = "Hello from Android";
                 int msgLen = msgOut.length();
                 byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
                 DatagramSocket socket = new DatagramSocket();
-                DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
+                DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName(IpAddress), 54321);
                 socket.setBroadcast(true);
                 socket.send(packet);
                 long startTime = System.currentTimeMillis();
@@ -245,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
                     int msgLen = msgOut.length();
                     byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
                     DatagramSocket socket = new DatagramSocket();
-                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
+                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName(Activity2.ipAddress), Activity2.portNum);
                     socket.setBroadcast(true);
                     socket.send(packet);
                     long startTime = System.currentTimeMillis();
@@ -281,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
                     int msgLen = msgOut.length();
                     byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
                     DatagramSocket socket = new DatagramSocket();
-                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
+                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName(Activity2.ipAddress), Activity2.portNum);
                     socket.setBroadcast(true);
                     socket.send(packet);
                     long startTime = System.currentTimeMillis();
