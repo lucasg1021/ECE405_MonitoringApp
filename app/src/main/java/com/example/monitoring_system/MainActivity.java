@@ -54,12 +54,12 @@ public class MainActivity extends AppCompatActivity {
     TextView tTemp, tHumid;
     private Button menuTwo;
 
-
     ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent i = new Intent(this, Activity2.class);
         setContentView(R.layout.activity_main);
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
         setTempValue = settings.getInt("currentSetTemp", 70);
@@ -196,8 +196,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
-
-                String IpAddress = "";
+                String IpAddress;
+                String PREFSTwo = Activity2.PREFSTwo;
+                IpAddress = Activity2.ipAddress;
 
                 SharedPreferences settings = getSharedPreferences(Activity2.PREFSTwo,0);
                 IpAddress = settings.getString("ipstring","");

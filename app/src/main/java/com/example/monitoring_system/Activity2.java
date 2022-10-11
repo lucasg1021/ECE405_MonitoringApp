@@ -28,7 +28,6 @@ public class Activity2 extends AppCompatActivity {
         input1 = (EditText) findViewById(R.id.input1);
         input2 = (EditText) findViewById(R.id.input2);
 
-
         SharedPreferences settings = getSharedPreferences(PREFSTwo, 0);
         ipAddress = settings.getString("ipstring", "23.127.196.133");
         portNum = settings.getInt("Port Number", 54321);
@@ -36,16 +35,16 @@ public class Activity2 extends AppCompatActivity {
         submitButton = (Button) findViewById(R.id.submitButton);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {ipAddress = input1.getText().toString();
 
                 SharedPreferences settings = getSharedPreferences(PREFSTwo, 0);
                 SharedPreferences.Editor editor = settings.edit();
-                editor.putString("Ip Address", ipAddress);
+                editor.putString("ipstring", ipAddress);
                 editor.commit();
 
-                input1.setText(ipAddress);
+//                input1.setText(ipAddress);
 
-               //ipAddress = input1.getText().toString();
+
                //portNum = Integer.valueOf(input2.getText().toString());
 
             }
