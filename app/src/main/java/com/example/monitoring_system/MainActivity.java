@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.format.Formatter;
+import android.util.Xml;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,8 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -49,17 +52,21 @@ import java.util.concurrent.Future;
 public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
-    private int setTempValue, setHumidValue, pubMod, pubBase, privNum, sendB, key;
-    private int connection = 1;     // indicates whether connection has been established
+    private int setTempValue, setHumidValue, privNum, sendB;
+    private int key;
+    private int connection = 0;     // indicates whether connection has been established
+    private int pubMod = 2147483647;
+    private int pubBase = 7;
     TextView tTemp, tHumid;
     private Button menuTwo;
-
-    ScheduledExecutorService scheduledTaskExecutor = Executors.newScheduledThreadPool(5);
+    //base 7, mod 2147483647 for C long long
+    ScheduledExecutorService scheduledTaskExecutorKey = Executors.newScheduledThreadPool(5);
+    ScheduledExecutorService scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent i = new Intent(this, Activity2.class);
+
         setContentView(R.layout.activity_main);
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
         setTempValue = settings.getInt("currentSetTemp", 70);
@@ -106,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         });
         // if connection established and key shared, send requests for temp&humid data
         if(connection != 0) {
-            scheduledTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            scheduledTaskExecutorUDP.scheduleAtFixedRate(new Runnable() {
                 public void run() {
                     udpRunnable runnable = new udpRunnable();
                     new Thread(runnable).start();
@@ -115,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         }
         // else try to send encryption data to MCU
         else {
-            scheduledTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            scheduledTaskExecutorKey.scheduleAtFixedRate(new Runnable() {
                 public void run() {
                     keyRunnable runnable = new keyRunnable();
                     new Thread(runnable).start();
@@ -203,10 +210,6 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences settings = getSharedPreferences(Activity2.PREFSTwo,0);
                 IpAddress = settings.getString("ipstring","");
 
-                //SharedPreferences.Editor editor = settings.edit();
-                //editor.putString("ipstring", IpAddress);
-                //editor.commit();
-
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
                 String msgOut = "Hello from Android";
@@ -225,10 +228,37 @@ public class MainActivity extends AppCompatActivity {
                     socket.receive(packetIn);
                     String message = new String(msgIn, 0, packetIn.getLength());
                     Log.i("MESSAGE RECEIVED", message);
-                    String tempS = message.substring(0, 5) + "°F";
-                    String humidS = message.substring(6) + "%";
-                    ((TextView) findViewById(R.id.currTemp)).setText(tempS);
-                    ((TextView) findViewById(R.id.currHumid)).setText(humidS);
+
+                    if(message.contains("STARTUPSEQ")){
+                        connection = 0;
+                        scheduledTaskExecutorUDP.shutdown();
+                        scheduledTaskExecutorKey = Executors.newScheduledThreadPool(5);
+                        scheduledTaskExecutorKey.scheduleAtFixedRate(new Runnable() {
+                            public void run() {
+                                keyRunnable runnable = new keyRunnable();
+                                new Thread(runnable).start();
+                            }
+                        }, 0, 5000, TimeUnit.MILLISECONDS);
+
+                        return;
+                    }
+
+                    // decode
+                    byte[] messageOutBytes = new byte[msgIn.length];
+                    int key8b = key & 0xFF;
+
+                    for(int i = 0; i < msgIn.length; i++){
+                        messageOutBytes[i] = (byte) (key8b ^ msgIn[i]);
+                    }
+
+                    String messageOut = new String(messageOutBytes, StandardCharsets.US_ASCII);
+
+                    if(messageOut.contains("DATA")) {
+                        String tempS = messageOut.substring(0, 5) + "°F";
+                        String humidS = messageOut.substring(6, 11) + "%";
+                        ((TextView) findViewById(R.id.currTemp)).setText(tempS);
+                        ((TextView) findViewById(R.id.currHumid)).setText(humidS);
+                    }
                 }
                 catch(SocketTimeoutException e){
 //                    Log.i("TIMEOUT", "Timed out waiting for response");
@@ -246,32 +276,34 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void run() {
+            // begin the key exchange sequence
             if (connection == 0) {
                 try {
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                     StrictMode.setThreadPolicy(policy);
-                    Integer mod = new Random().nextInt(21) + 10;     // public modulus, p, range 10-30
-                    Integer base = new Random().nextInt(9) + 1;
-                    String msgOut = mod + " " + base + " STARTUP";
+
+                    // send message to ip and port
+                    String msgOut = "STARTUP";
                     int msgLen = msgOut.length();
                     byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
                     DatagramSocket socket = new DatagramSocket();
-                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName(Activity2.ipAddress), Activity2.portNum);
+                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                     socket.setBroadcast(true);
                     socket.send(packet);
+
+                    // set timer for timeout, wait for packet
                     long startTime = System.currentTimeMillis();
                     long endTime = startTime + 10000;
                     byte[] msgIn = new byte[4096];
                     DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
                     socket.setSoTimeout(10000);
+
                     try {
                         socket.receive(packetIn);
                         String message = new String(msgIn, 0, packetIn.getLength());
                         Log.i("MESSAGE RECEIVED", message);
                         if (message.equals("ACK")) {
                             connection = 2;
-                            pubMod = mod;
-                            pubBase = base;
                             privNum = new Random().nextInt(9) + 1;
                             sendB = Math.toIntExact(Math.round(Math.pow(pubBase, privNum) % pubMod));
                         }
@@ -284,6 +316,8 @@ public class MainActivity extends AppCompatActivity {
                     //                Log.i("CONNECTION STATUS", "disconnected");
                 }
             }
+
+            // calculate B and send, wait for A in return
             else if(connection == 2){
                 try {
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -292,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
                     int msgLen = msgOut.length();
                     byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
                     DatagramSocket socket = new DatagramSocket();
-                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName(Activity2.ipAddress), Activity2.portNum);
+                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                     socket.setBroadcast(true);
                     socket.send(packet);
                     long startTime = System.currentTimeMillis();
@@ -311,7 +345,9 @@ public class MainActivity extends AppCompatActivity {
                             key = Math.toIntExact(Math.round(Math.pow(A, privNum) % pubMod));
                             connection = 1;
                             Log.i("KEY", String.valueOf(key));
-                            scheduledTaskExecutor.scheduleAtFixedRate(new Runnable() {
+                            scheduledTaskExecutorKey.shutdown();
+                            scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
+                            scheduledTaskExecutorUDP.scheduleAtFixedRate(new Runnable() {
                                 public void run() {
                                     udpRunnable runnable = new udpRunnable();
                                     new Thread(runnable).start();

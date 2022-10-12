@@ -29,7 +29,7 @@ public class Activity2 extends AppCompatActivity {
         input2 = (EditText) findViewById(R.id.input2);
 
         SharedPreferences settings = getSharedPreferences(PREFSTwo, 0);
-        ipAddress = settings.getString("ipstring", "23.127.196.133");
+        ipAddress = settings.getString("ipstring", "");
         portNum = settings.getInt("Port Number", 54321);
 
         submitButton = (Button) findViewById(R.id.submitButton);
