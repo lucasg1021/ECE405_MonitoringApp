@@ -79,12 +79,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:layout_width="365dp"
-        android:layout_height="232dp"
-        android:layout_marginBottom="60dp"
+        android:layout_width="363dp"
+        android:layout_height="253dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.939">
 
         <TextView
             android:id="@+id/textViewSetTempLabel"
@@ -194,35 +196,52 @@
             app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@android:drawable/arrow_down_float" />
 
+        <Button
+            android:id="@+id/buttonSetPoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="buttonSubmitSetPoints"
+            android:text="@string/submitSetPoints"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.921" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/switchButton"
-        android:layout_width="96dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginBottom="48dp"
-        android:text="New IP"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="275dp"
+        android:layout_height="162dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.265"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.705" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/alertButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="135dp"
-        android:layout_marginEnd="136dp"
-        android:layout_marginBottom="106dp"
-        android:text="Notification"
-        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchButton"
-        app:layout_constraintVertical_bias="1.0" />
+        <Button
+            android:id="@+id/switchButton"
+            android:layout_width="96dp"
+            android:layout_height="56dp"
+            android:text="New IP"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.15" />
+
+        <Button
+            android:id="@+id/alertButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Notification"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.78" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

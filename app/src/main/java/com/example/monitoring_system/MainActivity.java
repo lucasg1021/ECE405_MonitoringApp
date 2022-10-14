@@ -53,15 +53,18 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
     private int setTempValue, setHumidValue, privNum, sendB;
-    private int key;
-    private int connection = 0;     // indicates whether connection has been established
-    private int pubMod = 2147483647;
-    private int pubBase = 7;
+    private int key = 123;
+    private int connection = 1;     // indicates whether connection has been established
+    //base 7, mod 2147483647 for C long long
+    int pubMod = 2147483647;
+    int pubBase = 7;
+
     TextView tTemp, tHumid;
     private Button menuTwo;
-    //base 7, mod 2147483647 for C long long
+
     ScheduledExecutorService scheduledTaskExecutorKey = Executors.newScheduledThreadPool(5);
     ScheduledExecutorService scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
+    ScheduledExecutorService scheduledTaskExecutorSetPoints = Executors.newScheduledThreadPool(5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,6 +201,24 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.setHumid)).setText(output);
     }
 
+    public void buttonSubmitSetPoints(View v){
+        if(connection == 1) {
+            scheduledTaskExecutorKey.shutdown();
+            scheduledTaskExecutorUDP.shutdown();
+
+            connection = 5;
+
+            scheduledTaskExecutorSetPoints = Executors.newScheduledThreadPool(5);
+            scheduledTaskExecutorSetPoints.scheduleAtFixedRate(new Runnable() {
+                public void run() {
+                    setPointRunnable runnable = new setPointRunnable();
+                    new Thread(runnable).start();
+                }
+            }, 0, 5000, TimeUnit.MILLISECONDS);
+        }
+
+    }
+
     class udpRunnable implements Runnable {
 
         @Override
@@ -212,15 +233,14 @@ public class MainActivity extends AppCompatActivity {
 
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
-                String msgOut = "Hello from Android";
+                String msgOut = "REQUESTDATA";
                 int msgLen = msgOut.length();
-                byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
+                byte[] msg = utils.encrypt(key, msgOut);
                 DatagramSocket socket = new DatagramSocket();
                 DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName(IpAddress), 54321);
                 socket.setBroadcast(true);
                 socket.send(packet);
-                long startTime = System.currentTimeMillis();
-                long endTime = startTime + 10000;
+
                 byte[] msgIn = new byte[4096];
                 DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
                 socket.setSoTimeout(10000);
@@ -244,14 +264,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     // decode
-                    byte[] messageOutBytes = new byte[msgIn.length];
-                    int key8b = key & 0xFF;
-
-                    for(int i = 0; i < msgIn.length; i++){
-                        messageOutBytes[i] = (byte) (key8b ^ msgIn[i]);
-                    }
-
-                    String messageOut = new String(messageOutBytes, StandardCharsets.US_ASCII);
+                    String messageOut = utils.decrypt(key, msgIn);
 
                     if(messageOut.contains("DATA")) {
                         String tempS = messageOut.substring(0, 5) + "°F";
@@ -367,6 +380,61 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    class setPointRunnable implements Runnable {
 
+        @Override
+        public void run() {
+            // begin the key exchange sequence
+            if(connection == 5){
+                try {
+                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                    StrictMode.setThreadPolicy(policy);
+
+                    // send message to ip and port
+                    String msgOut =  "SETPOINTS " + setTempValue + " " + setHumidValue + " DONE";
+                    int msgLen = msgOut.length();
+                    byte[] msg = utils.encrypt(key, msgOut);
+                    DatagramSocket socket = new DatagramSocket();
+                    DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
+                    socket.setBroadcast(true);
+                    socket.send(packet);
+
+                    // set timer for timeout, wait for packet
+                    long startTime = System.currentTimeMillis();
+                    long endTime = startTime + 10000;
+                    byte[] msgIn = new byte[4096];
+                    DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
+                    socket.setSoTimeout(10000);
+
+                    try {
+                        socket.receive(packetIn);
+                        String message = new String(msgIn, 0, packetIn.getLength());
+                        Log.i("MESSAGE RECEIVED", message);
+                        String messageOut = utils.decrypt(key, msgIn);
+                        if (messageOut.equals("ACK")) {
+                            connection = 0;
+
+                            scheduledTaskExecutorSetPoints.shutdown();
+                            scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
+                            scheduledTaskExecutorUDP.scheduleAtFixedRate(new Runnable() {
+                                public void run() {
+                                    udpRunnable runnable = new udpRunnable();
+                                    new Thread(runnable).start();
+                                }
+                            }, 0, 5000, TimeUnit.MILLISECONDS);
+
+                        }
+                    } catch (SocketTimeoutException e) {
+                        //                    Log.i("TIMEOUT", "Timed out waiting for response");
+                    }
+
+                    socket.close();
+                } catch (IOException ioException) {
+                    //                Log.i("CONNECTION STATUS", "disconnected");
+                }
+
+                }
+            }
+        }
 
 }
