@@ -52,7 +52,7 @@ import java.util.concurrent.Future;
 public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
-    private int setTempValue, setHumidValue, privNum, sendB;
+    private int setTempValue, setHumidValue, privNum, sendB, alertFlag, noticeFlag;
     private int key = 123;
     private int connection = 1;     // indicates whether connection has been established
     //base 7, mod 2147483647 for C long long
@@ -266,11 +266,21 @@ public class MainActivity extends AppCompatActivity {
                     // decode
                     String messageOut = utils.decrypt(key, msgIn);
 
-                    if(messageOut.contains("DATA")) {
+                    if(messageOut.contains("ALERT")) {
+                        alertFlag = Integer.parseInt(messageOut.substring(6, 7));
+                        utils.alert(alertFlag);
+
+                        String tempS = messageOut.substring(8, 13) + "°F";
+                        String humidS = messageOut.substring(14, 20) + "%";
+                        ((TextView) findViewById(R.id.currTemp)).setText(tempS);
+                        ((TextView) findViewById(R.id.currHumid)).setText(humidS);
+                    }
+                    else if(messageOut.contains("DATA")) {
                         String tempS = messageOut.substring(0, 5) + "°F";
                         String humidS = messageOut.substring(6, 11) + "%";
                         ((TextView) findViewById(R.id.currTemp)).setText(tempS);
                         ((TextView) findViewById(R.id.currHumid)).setText(humidS);
+
                     }
                 }
                 catch(SocketTimeoutException e){
@@ -315,7 +325,26 @@ public class MainActivity extends AppCompatActivity {
                         socket.receive(packetIn);
                         String message = new String(msgIn, 0, packetIn.getLength());
                         Log.i("MESSAGE RECEIVED", message);
-                        if (message.equals("ACK")) {
+                        if (message.contains("ACK")) {
+                            setTempValue = Integer.parseInt(message.substring(4, 6));
+                            setHumidValue = Integer.parseInt(message.substring(7));
+
+                            String output = setTempValue + "°F";
+                            // display
+                            ((TextView) findViewById(R.id.setTemp)).setText(output);
+
+                            // convert updated humidity back to string
+                            String output2 = setHumidValue + "%";
+                            // display
+                            ((TextView) findViewById(R.id.setHumid)).setText(output2);
+
+                            SharedPreferences settings = getSharedPreferences(PREFS, 0);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putInt("currentSetTemp", setTempValue);
+                            editor.commit();
+                            editor.putInt("currentSetHumid", setHumidValue);
+                            editor.commit();
+
                             connection = 2;
                             privNum = new Random().nextInt(9) + 1;
                             sendB = Math.toIntExact(Math.round(Math.pow(pubBase, privNum) % pubMod));
@@ -411,8 +440,27 @@ public class MainActivity extends AppCompatActivity {
                         String message = new String(msgIn, 0, packetIn.getLength());
                         Log.i("MESSAGE RECEIVED", message);
                         String messageOut = utils.decrypt(key, msgIn);
-                        if (messageOut.equals("ACK")) {
-                            connection = 0;
+                        if (messageOut.contains("ACK")) {
+                            setTempValue = Integer.parseInt(messageOut.substring(4, 6));
+                            setHumidValue = Integer.parseInt(messageOut.substring(7, 9));
+
+                            String output = setTempValue + "°F";
+                            // display
+                            ((TextView) findViewById(R.id.setTemp)).setText(output);
+
+                            // convert updated humidity back to string
+                            String output2 = setHumidValue + "%";
+                            // display
+                            ((TextView) findViewById(R.id.setHumid)).setText(output2);
+
+                            SharedPreferences settings = getSharedPreferences(PREFS, 0);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putInt("currentSetTemp", setTempValue);
+                            editor.commit();
+                            editor.putInt("currentSetHumid", setHumidValue);
+                            editor.commit();
+
+                            connection = 1;
 
                             scheduledTaskExecutorSetPoints.shutdown();
                             scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
