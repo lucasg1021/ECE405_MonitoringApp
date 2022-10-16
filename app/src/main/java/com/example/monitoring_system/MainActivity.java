@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,"My Notification");
             builder.setContentTitle("Enclosure Alert");
             builder.setContentText("Hello your temperature is low ");
-            builder.setSmallIcon(R.drawable.ic_launcher_background);
+            builder.setSmallIcon(R.drawable.ic_notify_pic);
             builder.setAutoCancel(true);
             builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
                 NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);

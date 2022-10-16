@@ -50,7 +50,7 @@ public class utils {
 
                 builder.setContentTitle("Enclosure Alert");
                 builder.setContentText("Hello your temperature is too high ");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setSmallIcon(R.drawable.ic_notify_pic);
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -63,7 +63,7 @@ public class utils {
 
                 builder.setContentTitle("Enclosure Alert");
                 builder.setContentText("Hello your temperature is too low ");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setSmallIcon(R.drawable.ic_notify_pic);
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -75,7 +75,7 @@ public class utils {
 
                 builder.setContentTitle("Enclosure Alert");
                 builder.setContentText("Hello your humidity is too high ");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setSmallIcon(R.drawable.ic_notify_pic);
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -86,7 +86,7 @@ public class utils {
 
                 builder.setContentTitle("Enclosure Alert");
                 builder.setContentText("Hello your humidity is too low ");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setSmallIcon(R.drawable.ic_notify_pic);
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -98,7 +98,7 @@ public class utils {
 
                 builder.setContentTitle("Enclosure Alert");
                 builder.setContentText("Hello your temperature and humidity are too high ");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setSmallIcon(R.drawable.ic_notify_pic);
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -110,7 +110,7 @@ public class utils {
 
                 builder.setContentTitle("Enclosure Alert");
                 builder.setContentText("Hello your temperature is too low and humidity too high ");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setSmallIcon(R.drawable.ic_notify_pic);
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -122,7 +122,7 @@ public class utils {
 
                 builder.setContentTitle("Enclosure Alert");
                 builder.setContentText("Hello your temperature is too high and humidity is too low ");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setSmallIcon(R.drawable.ic_notify_pic);
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -134,7 +134,7 @@ public class utils {
 
                 builder.setContentTitle("Enclosure Alert");
                 builder.setContentText("Hello your temperature and humidity are too low ");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setSmallIcon(R.drawable.ic_notify_pic);
                 builder.setAutoCancel(true);
                 builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
