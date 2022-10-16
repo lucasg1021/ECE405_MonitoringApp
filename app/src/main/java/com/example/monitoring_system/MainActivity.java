@@ -92,14 +92,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
     // Notification code goes here
 
-
-
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,"My Notification");
             builder.setContentTitle("Enclosure Alert");
             builder.setContentText("Hello your temperature is low ");
             builder.setSmallIcon(R.drawable.ic_launcher_background);
             builder.setAutoCancel(true);
-
+            builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
                 NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
                 managerCompat.notify(1,builder.build());
 
@@ -237,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
                 int msgLen = msgOut.length();
                 byte[] msg = utils.encrypt(key, msgOut);
                 DatagramSocket socket = new DatagramSocket();
-                DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName(IpAddress), 54321);
+                DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                 socket.setBroadcast(true);
                 socket.send(packet);
 

@@ -36,7 +36,7 @@ public class Activity2 extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {ipAddress = input1.getText().toString();
-
+             ipAddress = input1.getText().toString();
                 SharedPreferences settings = getSharedPreferences(PREFSTwo, 0);
                 SharedPreferences.Editor editor = settings.edit();
                 editor.putString("ipstring", ipAddress);

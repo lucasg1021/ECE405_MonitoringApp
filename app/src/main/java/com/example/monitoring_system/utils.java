@@ -41,39 +41,105 @@ public class utils {
 
     public static void alert(int alertFlag, Context context){
 
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
         switch(alertFlag){
             case 1:
                 Log.i("ALERT", "TEMP TOO HIGH");
 
+                builder.setContentTitle("Enclosure Alert");
+                builder.setContentText("Hello your temperature is too high ");
+                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setAutoCancel(true);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+
+                managerCompat.notify(1,builder.build());
+
                 break;
             case 2:
                 Log.i("ALERT", "TEMP TOO LOW");
+
+                builder.setContentTitle("Enclosure Alert");
+                builder.setContentText("Hello your temperature is too low ");
+                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setAutoCancel(true);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat.notify(1,builder.build());
+
                 break;
             case 3:
                 Log.i("ALERT", "HUMIDITY TOO HIGH");
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+
                 builder.setContentTitle("Enclosure Alert");
-                builder.setContentText("Hello your temperature is low ");
+                builder.setContentText("Hello your humidity is too high ");
                 builder.setSmallIcon(R.drawable.ic_launcher_background);
                 builder.setAutoCancel(true);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
                 managerCompat.notify(1,builder.build());
                 break;
             case 4:
                 Log.i("ALERT", "HUMIDITY TOO LOW");
+
+                builder.setContentTitle("Enclosure Alert");
+                builder.setContentText("Hello your humidity is too low ");
+                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setAutoCancel(true);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat.notify(1,builder.build());
+
                 break;
             case 5:
                 Log.i("ALERT", "TEMP TOO HIGH & HUMIDITY TOO HIGH");
+
+                builder.setContentTitle("Enclosure Alert");
+                builder.setContentText("Hello your temperature and humidity are too high ");
+                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setAutoCancel(true);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat.notify(1,builder.build());
+
                 break;
             case 6:
                 Log.i("ALERT", "TEMP TOO LOW & HUMIDITY TOO HIGH");
+
+                builder.setContentTitle("Enclosure Alert");
+                builder.setContentText("Hello your temperature is too low and humidity too high ");
+                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setAutoCancel(true);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat.notify(1,builder.build());
+
                 break;
             case 7:
                 Log.i("ALERT", "TEMP TOO HIGH & HUMIDITY TOO LOW");
+
+                builder.setContentTitle("Enclosure Alert");
+                builder.setContentText("Hello your temperature is too high and humidity is too low ");
+                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setAutoCancel(true);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat.notify(1,builder.build());
+
                 break;
             case 8:
                 Log.i("ALERT", "TEMP TOO LOW & HUMIDITY TOO LOW");
+
+                builder.setContentTitle("Enclosure Alert");
+                builder.setContentText("Hello your temperature and humidity are too low ");
+                builder.setSmallIcon(R.drawable.ic_launcher_background);
+                builder.setAutoCancel(true);
+                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat.notify(1,builder.build());
+
                 break;
 
         }
