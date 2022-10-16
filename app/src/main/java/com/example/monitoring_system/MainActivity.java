@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if(messageOut.contains("ALERT")) {
                         alertFlag = Integer.parseInt(messageOut.substring(6, 7));
-                        utils.alert(alertFlag);
+                        utils.alert(alertFlag, MainActivity.this);
 
                         String tempS = messageOut.substring(8, 13) + "°F";
                         String humidS = messageOut.substring(14, 20) + "%";
