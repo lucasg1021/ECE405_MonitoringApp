@@ -264,22 +264,27 @@ public class MainActivity extends AppCompatActivity {
                     // decode
                     String messageOut = utils.decrypt(key, msgIn);
 
-                    if(messageOut.contains("ALERT")) {
-                        alertFlag = Integer.parseInt(messageOut.substring(6, 7));
+                    int indA = messageOut.indexOf("ALERT");
+                    int indN = messageOut.indexOf("NOTICE");
+                    int indD = messageOut.indexOf("DATA");
+
+                    if(indA != -1) {
+                        alertFlag = Integer.parseInt(messageOut.substring(indA + 6, indA + 7));
                         utils.alert(alertFlag, MainActivity.this);
+                    }
 
-                        String tempS = messageOut.substring(8, 13) + "°F";
-                        String humidS = messageOut.substring(14, 20) + "%";
+                    if(indN != -1){
+                        noticeFlag = Integer.parseInt(messageOut.substring(indN+7, indN+8));
+                        utils.notice(noticeFlag, MainActivity.this);
+                    }
+                    if(indD != -1) {
+                        String tempS = messageOut.substring(indD-12, indD-7) + "°F";
+                        String humidS = messageOut.substring(indD-6, indD-2) + "%";
+
                         ((TextView) findViewById(R.id.currTemp)).setText(tempS);
                         ((TextView) findViewById(R.id.currHumid)).setText(humidS);
                     }
-                    else if(messageOut.contains("DATA")) {
-                        String tempS = messageOut.substring(0, 5) + "°F";
-                        String humidS = messageOut.substring(6, 11) + "%";
-                        ((TextView) findViewById(R.id.currTemp)).setText(tempS);
-                        ((TextView) findViewById(R.id.currHumid)).setText(humidS);
 
-                    }
                 }
                 catch(SocketTimeoutException e){
 //                    Log.i("TIMEOUT", "Timed out waiting for response");

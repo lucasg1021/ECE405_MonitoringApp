@@ -43,7 +43,6 @@ public class utils {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
-
         switch(alertFlag){
             case 1:
                 Log.i("ALERT", "TEMP TOO HIGH");
@@ -74,10 +73,9 @@ public class utils {
                 Log.i("ALERT", "HUMIDITY TOO HIGH");
 
                 builder.setContentTitle("Enclosure Alert");
-                builder.setContentText("Hello your humidity is too high ");
-                builder.setSmallIcon(R.drawable.ic_notify_pic);
+                builder.setContentText("Hello your temperature is low ");
+                builder.setSmallIcon(R.drawable.ic_launcher_background);
                 builder.setAutoCancel(true);
-                builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
                 managerCompat.notify(1,builder.build());
                 break;
@@ -140,6 +138,92 @@ public class utils {
 
                 managerCompat.notify(1,builder.build());
 
+                break;
+
+        }
+    }
+
+    public static void notice(int noticeFlag, Context context){
+
+        // REPLACE COMMENTED CODE WITH NEW "NOTICE" NOTIFICATION
+
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+//        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+        switch(noticeFlag){
+            case 1:
+                Log.i("NOTICE", "TEMP TOO HIGH");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 2:
+                Log.i("NOTICE", "TEMP TOO LOW");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 3:
+                Log.i("NOTICE", "HUMIDITY TOO HIGH");
+
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 4:
+                Log.i("NOTICE", "HUMIDITY TOO LOW");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 5:
+                Log.i("NOTICE", "TEMP TOO HIGH & HUMIDITY TOO HIGH");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 6:
+                Log.i("NOTICE", "TEMP TOO LOW & HUMIDITY TOO HIGH");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 7:
+                Log.i("NOTICE", "TEMP TOO HIGH & HUMIDITY TOO LOW");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 8:
+                Log.i("NOTICE", "TEMP TOO LOW & HUMIDITY TOO LOW");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
                 break;
 
         }
