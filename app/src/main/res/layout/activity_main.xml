@@ -4,115 +4,148 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:visibility="visible"
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
-        android:layout_width="355dp"
-        android:layout_height="226dp"
+        android:layout_width="412dp"
+        android:layout_height="148dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.652"
+        app:layout_constraintHorizontal_bias="0.629"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.146">
+        app:layout_constraintVertical_bias="0.06">
 
         <TextView
             android:id="@+id/textViewCurrTempLabel"
-            android:layout_width="161dp"
-            android:layout_height="31dp"
+            android:layout_width="190dp"
+            android:layout_height="28dp"
             android:text="@string/currTempLabel"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.085"
+            app:layout_constraintHorizontal_bias="0.121"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.217" />
+            app:layout_constraintVertical_bias="0.207" />
 
         <TextView
             android:id="@+id/textViewCurrHumidLabel"
-            android:layout_width="142dp"
-            android:layout_height="33dp"
+            android:layout_width="164dp"
+            android:layout_height="26dp"
             android:text="@string/currHumidLabel"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.924"
+            app:layout_constraintHorizontal_bias="0.935"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.212" />
+            app:layout_constraintVertical_bias="0.204" />
 
         <TextView
             android:id="@+id/currTemp"
-            android:layout_width="115dp"
-            android:layout_height="63dp"
+            android:layout_width="132dp"
+            android:layout_height="66dp"
             android:text="@string/currTempValue"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="24sp"
+            android:textSize="34sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.141"
+            app:layout_constraintHorizontal_bias="0.192"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.453" />
+            app:layout_constraintVertical_bias="0.621" />
 
         <TextView
             android:id="@+id/currHumid"
-            android:layout_width="112dp"
+            android:layout_width="134dp"
             android:layout_height="60dp"
             android:text="@string/currHumidValue"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textSize="24sp"
+            android:textSize="34sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.86"
+            app:layout_constraintHorizontal_bias="0.902"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.445" />
+            app:layout_constraintVertical_bias="0.602" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="146dp"
+        android:layout_height="85dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.027"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.979">
+
+        <Button
+            android:id="@+id/switchButton"
+            android:layout_width="96dp"
+            android:layout_height="56dp"
+            android:text="New IP"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.448" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:layout_width="363dp"
-        android:layout_height="253dp"
+        android:layout_width="387dp"
+        android:layout_height="461dp"
+        android:outlineProvider="bounds"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.578"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.939">
+        app:layout_constraintVertical_bias="0.77">
 
         <TextView
             android:id="@+id/textViewSetTempLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/setTempLabel"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.204"
+            app:layout_constraintHorizontal_bias="0.151"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.258" />
+            app:layout_constraintVertical_bias="0.138" />
 
         <TextView
             android:id="@+id/textViewSetHumidLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/setHumidLabel"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.764"
+            app:layout_constraintHorizontal_bias="0.773"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.258" />
+            app:layout_constraintVertical_bias="0.141" />
 
         <TextView
             android:id="@+id/setTemp"
@@ -125,9 +158,10 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.185"
+            app:layout_constraintHorizontal_bias="0.182"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.241" />
 
         <ImageButton
             android:id="@+id/imageButtonTempUp"
@@ -139,7 +173,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/setTemp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.409"
+            app:layout_constraintVertical_bias="0.196"
             app:srcCompat="@android:drawable/arrow_up_float" />
 
         <ImageButton
@@ -166,21 +200,22 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.733"
+            app:layout_constraintHorizontal_bias="0.736"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.241" />
 
         <ImageButton
             android:id="@+id/imageButtonHumidUp"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:layout_marginEnd="40dp"
             android:onClick="increaseSetHumid"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/setHumid"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.409"
+            app:layout_constraintVertical_bias="0.196"
             app:srcCompat="@android:drawable/arrow_up_float" />
 
         <ImageButton
@@ -204,44 +239,142 @@
             android:text="@string/submitSetPoints"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.519"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.921" />
+            app:layout_constraintVertical_bias="0.853" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="275dp"
-        android:layout_height="162dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <Button
-            android:id="@+id/switchButton"
-            android:layout_width="96dp"
-            android:layout_height="56dp"
-            android:text="New IP"
+        <ImageButton
+            android:id="@+id/imageButtonTempTolUp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:onClick="increaseTempTol"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tolT"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.558"
+            app:srcCompat="@android:drawable/arrow_up_float" />
+
+        <ImageButton
+            android:id="@+id/imageButtonTempTolDown"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="4dp"
+            android:onClick="decreaseTempTol"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tolT"
+            app:layout_constraintTop_toBottomOf="@+id/imageButtonTempTolUp"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@android:drawable/arrow_down_float" />
+
+        <TextView
+            android:id="@+id/tolT"
+            android:layout_width="75dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="12dp"
+            android:text="@string/tolTValue"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.189"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.15" />
+            app:layout_constraintVertical_bias="0.625" />
 
-        <Button
-            android:id="@+id/alertButton"
+        <TextView
+            android:id="@+id/textViewTempTolLabel"
+            android:layout_width="121dp"
+            android:layout_height="26dp"
+            android:text="@string/tempTolLabel"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.151"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.48" />
+
+        <ImageButton
+            android:id="@+id/imageButtonHumidTolDown"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:onClick="decreaseHumidTol"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tolH"
+            app:layout_constraintTop_toBottomOf="@+id/imageButtonHumidTolUp"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@android:drawable/arrow_down_float" />
+
+        <ImageButton
+            android:id="@+id/imageButtonHumidTolUp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:onClick="increaseHumidTol"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/tolH"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.558"
+            app:srcCompat="@android:drawable/arrow_up_float" />
+
+        <TextView
+            android:id="@+id/tolH"
+            android:layout_width="75dp"
+            android:layout_height="50dp"
+            android:text="@string/tolHValue"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.736"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.625" />
+
+        <TextView
+            android:id="@+id/textViewHumidTolLabel"
+            android:layout_width="139dp"
+            android:layout_height="32dp"
+            android:text="@string/humidTolLabel"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.845"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.487" />
+
+        <TextView
+            android:id="@+id/ControlsText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Notification"
+            android:text="Controls"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="24sp"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.78" />
+            app:layout_constraintVertical_bias="0.0" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

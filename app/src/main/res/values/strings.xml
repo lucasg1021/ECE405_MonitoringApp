@@ -10,4 +10,8 @@
     <string name="currTempValue">°F</string>
     <string name="currHumidValue">%</string>
     <string name="submitSetPoints">Submit</string>
+    <string name="tolTValue">2°F</string>
+    <string name="tolHValue">2%</string>
+    <string name="tempTolLabel">Temp. Tolerance</string>
+    <string name="humidTolLabel">Humidity Tolerance</string>
 </resources>
