@@ -2,7 +2,6 @@ package com.example.monitoring_system;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -43,6 +42,9 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,38 +54,36 @@ import java.util.concurrent.Future;
 public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
-    private int setTempValue, setHumidValue, privNum, sendB, alertFlag, noticeFlag;
+    private int setTempValue, setHumidValue, tolTValue, tolHValue, privNum, sendB, alertFlag, noticeFlag;
     private int key = 123;
     private int connection = 1;     // indicates whether connection has been established
     //base 7, mod 2147483647 for C long long
     int pubMod = 2147483647;
     int pubBase = 7;
-
-    TextView tTemp, tHumid;
+    TextView tTemp, tHumid, tempTolView, humidTolView;
     private Button menuTwo;
-
     ScheduledExecutorService scheduledTaskExecutorKey = Executors.newScheduledThreadPool(5);
     ScheduledExecutorService scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
     ScheduledExecutorService scheduledTaskExecutorSetPoints = Executors.newScheduledThreadPool(5);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
         setTempValue = settings.getInt("currentSetTemp", 70);
         setHumidValue = settings.getInt("currentSetHumid", 50);
+        tolTValue = settings.getInt("currentTolT", 2);
+        tolHValue = settings.getInt("currentTolH", 2);
         tTemp = findViewById(R.id.setTemp);
         tHumid = findViewById(R.id.setHumid);
-
-        Button getNotified;
-
+        tempTolView = findViewById(R.id.tolT);
+        humidTolView = findViewById(R.id.tolH);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("My Notification","My Notification", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
+
 
         menuTwo = (Button) findViewById(R.id.switchButton);
         menuTwo.setOnClickListener(new View.OnClickListener() {
@@ -124,8 +124,12 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         String outputTemp = setTempValue + "°F";
         String outputHumid = setHumidValue + "%";
+        String outputTolT = tolTValue + "°F";
+        String outputTolH = tolHValue + "%";
         tTemp.setText(outputTemp);
         tHumid.setText(outputHumid);
+        tempTolView.setText(outputTolT);
+        humidTolView.setText(outputTolH);
     }
 
     public void increaseSetTemp(View v) {
@@ -184,9 +188,7 @@ public class MainActivity extends AppCompatActivity {
         if(connection == 1) {
             scheduledTaskExecutorKey.shutdown();
             scheduledTaskExecutorUDP.shutdown();
-
             connection = 5;
-
             scheduledTaskExecutorSetPoints = Executors.newScheduledThreadPool(5);
             scheduledTaskExecutorSetPoints.scheduleAtFixedRate(new Runnable() {
                 public void run() {
@@ -195,21 +197,70 @@ public class MainActivity extends AppCompatActivity {
                 }
             }, 0, 5000, TimeUnit.MILLISECONDS);
         }
+    }
 
+    public void increaseTempTol(View v){
+        // update temp tolerance and save to preferences
+        tolTValue++;
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt("currentTolT", tolTValue);
+        editor.commit();
+        // convert updated temp tol back to string
+        String output = tolTValue + "°F";
+        // display
+        ((TextView) findViewById(R.id.tolT)).setText(output);
+    }
+
+    public void decreaseTempTol(View v){
+        // update temp tolerance and save to preferences
+        tolTValue--;
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt("currentTolT", tolTValue);
+        editor.commit();
+        // convert updated temp tol back to string
+        String output = tolTValue + "°F";
+        // display
+        ((TextView) findViewById(R.id.tolT)).setText(output);
+    }
+
+    public void increaseHumidTol(View v){
+        // update temp tolerance and save to preferences
+        tolHValue++;
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt("currentTolH", tolHValue);
+        editor.commit();
+        // convert updated humidity tol back to string
+        String output = tolHValue + "%";
+        // display
+        ((TextView) findViewById(R.id.tolH)).setText(output);
+    }
+
+    public void decreaseHumidTol(View v){
+        // update temp tolerance and save to preferences
+        tolHValue--;
+        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt("currentTolH", tolHValue);
+        editor.commit();
+        // convert updated humidity tol back to string
+        String output = tolHValue + "%";
+        // display
+        ((TextView) findViewById(R.id.tolH)).setText(output);
     }
 
     class udpRunnable implements Runnable {
-        
+
         @Override
         public void run() {
             try {
                 String IpAddress;
                 String PREFSTwo = Activity2.PREFSTwo;
                 IpAddress = Activity2.ipAddress;
-
                 SharedPreferences settings2 = getSharedPreferences(Activity2.PREFSTwo,0);
                 IpAddress = settings2.getString("ipstring","");
-
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
                 String msgOut = "REQUESTDATA";
@@ -219,7 +270,6 @@ public class MainActivity extends AppCompatActivity {
                 DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                 socket.setBroadcast(true);
                 socket.send(packet);
-
                 byte[] msgIn = new byte[4096];
                 DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
                 socket.setSoTimeout(10000);
@@ -227,7 +277,6 @@ public class MainActivity extends AppCompatActivity {
                     socket.receive(packetIn);
                     String message = new String(msgIn, 0, packetIn.getLength());
                     Log.i("MESSAGE RECEIVED", message);
-
                     if(message.contains("STARTUPSEQ")){
                         connection = 0;
                         scheduledTaskExecutorUDP.shutdown();
@@ -238,35 +287,28 @@ public class MainActivity extends AppCompatActivity {
                                 new Thread(runnable).start();
                             }
                         }, 0, 5000, TimeUnit.MILLISECONDS);
-
                         return;
                     }
 
                     // decode
                     String messageOut = utils.decrypt(key, msgIn);
-
                     int indA = messageOut.indexOf("ALERT");
                     int indN = messageOut.indexOf("NOTICE");
                     int indD = messageOut.indexOf("DATA");
                     int indS = messageOut.indexOf("SET");
-
                     String str = messageOut;
                     ArrayList nums;
-
                     str = messageOut.replaceAll("[^-?0-9]+", " ");
                     nums = new ArrayList(Arrays.asList(str.trim().split(" ")));
-
                     if(indA != -1) {
                         alertFlag = Integer.parseInt((String) nums.get(0));
                         utils.alert(alertFlag, MainActivity.this);
-
                         nums.remove(0);
                     }
 
                     if(indN != -1){
                         noticeFlag = Integer.parseInt((String) nums.get(0));
                         utils.notice(noticeFlag, MainActivity.this);
-
                         nums.remove(0);
                     }
                     if(indD != -1) {
@@ -278,14 +320,12 @@ public class MainActivity extends AppCompatActivity {
                         setHumidValue = Integer.parseInt((String) nums.get(5));
                         tolTValue = Integer.parseInt((String) nums.get(6));
                         tolHValue = Integer.parseInt((String) nums.get(7));
-
                         String tempS = tempInt + "." + tempDec + "°F";
                         String humidS = humidInt + "." + humidDec + "%";
                         String output = setTempValue + "°F";
                         String output2 = setHumidValue + "%";
                         String output3 = tolTValue + "°F";
                         String output4 = tolHValue + "%";
-
                         SharedPreferences settings = getSharedPreferences(PREFS, 0);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putInt("currentSetTemp", setTempValue);
@@ -296,7 +336,6 @@ public class MainActivity extends AppCompatActivity {
                         editor.commit();
                         editor.putInt("currentTolH", tolHValue);
                         editor.commit();
-
                         ((TextView) findViewById(R.id.currTemp)).setText(tempS);
                         ((TextView) findViewById(R.id.currHumid)).setText(humidS);
                         ((TextView) findViewById(R.id.setTemp)).setText(output);
@@ -315,6 +354,7 @@ public class MainActivity extends AppCompatActivity {
 //                Log.i("CONNECTION STATUS", "disconnected");
             }
         }
+
     }
 
     class keyRunnable implements Runnable {
@@ -326,7 +366,6 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                     StrictMode.setThreadPolicy(policy);
-
                     // send message to ip and port
                     String msgOut = "STARTUP";
                     int msgLen = msgOut.length();
@@ -335,38 +374,46 @@ public class MainActivity extends AppCompatActivity {
                     DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                     socket.setBroadcast(true);
                     socket.send(packet);
-
                     // set timer for timeout, wait for packet
                     long startTime = System.currentTimeMillis();
                     long endTime = startTime + 10000;
                     byte[] msgIn = new byte[4096];
                     DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
                     socket.setSoTimeout(10000);
-
                     try {
                         socket.receive(packetIn);
                         String message = new String(msgIn, 0, packetIn.getLength());
                         Log.i("MESSAGE RECEIVED", message);
                         if (message.contains("ACK")) {
                             setTempValue = Integer.parseInt(message.substring(4, 6));
-                            setHumidValue = Integer.parseInt(message.substring(7));
-
+                            setHumidValue = Integer.parseInt(message.substring(7, 9));
+                            tolTValue = Integer.parseInt(message.substring(10, 11));
+                            tolHValue = Integer.parseInt(message.substring(12, 13));
                             String output = setTempValue + "°F";
                             // display
                             ((TextView) findViewById(R.id.setTemp)).setText(output);
-
                             // convert updated humidity back to string
                             String output2 = setHumidValue + "%";
                             // display
                             ((TextView) findViewById(R.id.setHumid)).setText(output2);
-
+                            // convert updated temp tol back to string
+                            String output3 = tolTValue + "°F";
+                            // display
+                            ((TextView) findViewById(R.id.tolT)).setText(output3);
+                            // convert updated temp tol back to string
+                            String output4 = tolHValue + "%";
+                            // display
+                            ((TextView) findViewById(R.id.tolH)).setText(output4);
                             SharedPreferences settings = getSharedPreferences(PREFS, 0);
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putInt("currentSetTemp", setTempValue);
                             editor.commit();
                             editor.putInt("currentSetHumid", setHumidValue);
                             editor.commit();
-
+                            editor.putInt("currentTolT", tolTValue);
+                            editor.commit();
+                            editor.putInt("currentTolH", tolHValue);
+                            editor.commit();
                             connection = 2;
                             privNum = new Random().nextInt(9) + 1;
                             sendB = Math.toIntExact(Math.round(Math.pow(pubBase, privNum) % pubMod));
@@ -440,23 +487,20 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                     StrictMode.setThreadPolicy(policy);
-
                     // send message to ip and port
-                    String msgOut =  "SETPOINTS " + setTempValue + " " + setHumidValue + " DONE";
+                    String msgOut =  "SETPOINTS " + setTempValue + " " + setHumidValue + " " + tolTValue + " " + tolHValue + " DONE";
                     int msgLen = msgOut.length();
                     byte[] msg = utils.encrypt(key, msgOut);
                     DatagramSocket socket = new DatagramSocket();
                     DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                     socket.setBroadcast(true);
                     socket.send(packet);
-
                     // set timer for timeout, wait for packet
                     long startTime = System.currentTimeMillis();
                     long endTime = startTime + 10000;
                     byte[] msgIn = new byte[4096];
                     DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
                     socket.setSoTimeout(10000);
-
                     try {
                         socket.receive(packetIn);
                         String message = new String(msgIn, 0, packetIn.getLength());
@@ -465,25 +509,34 @@ public class MainActivity extends AppCompatActivity {
                         if (messageOut.contains("ACK")) {
                             setTempValue = Integer.parseInt(messageOut.substring(4, 6));
                             setHumidValue = Integer.parseInt(messageOut.substring(7, 9));
-
+                            tolTValue = Integer.parseInt(messageOut.substring(10, 11));
+                            tolHValue = Integer.parseInt(messageOut.substring(12, 13));
                             String output = setTempValue + "°F";
                             // display
                             ((TextView) findViewById(R.id.setTemp)).setText(output);
-
                             // convert updated humidity back to string
                             String output2 = setHumidValue + "%";
                             // display
                             ((TextView) findViewById(R.id.setHumid)).setText(output2);
-
+                            // convert updated temp tol back to string
+                            String output3 = tolTValue + "°F";
+                            // display
+                            ((TextView) findViewById(R.id.tolT)).setText(output3);
+                            // convert updated temp tol back to string
+                            String output4 = tolHValue + "%";
+                            // display
+                            ((TextView) findViewById(R.id.tolH)).setText(output4);
                             SharedPreferences settings = getSharedPreferences(PREFS, 0);
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putInt("currentSetTemp", setTempValue);
                             editor.commit();
                             editor.putInt("currentSetHumid", setHumidValue);
                             editor.commit();
-
+                            editor.putInt("currentTolT", tolTValue);
+                            editor.commit();
+                            editor.putInt("currentTolH", tolHValue);
+                            editor.commit();
                             connection = 1;
-
                             scheduledTaskExecutorSetPoints.shutdown();
                             scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
                             scheduledTaskExecutorUDP.scheduleAtFixedRate(new Runnable() {
@@ -492,7 +545,6 @@ public class MainActivity extends AppCompatActivity {
                                     new Thread(runnable).start();
                                 }
                             }, 0, 5000, TimeUnit.MILLISECONDS);
-
                         }
                     } catch (SocketTimeoutException e) {
                         //                    Log.i("TIMEOUT", "Timed out waiting for response");
