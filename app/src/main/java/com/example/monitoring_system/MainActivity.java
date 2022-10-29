@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class udpRunnable implements Runnable {
-
+        
         @Override
         public void run() {
             try {
@@ -207,8 +207,8 @@ public class MainActivity extends AppCompatActivity {
                 String PREFSTwo = Activity2.PREFSTwo;
                 IpAddress = Activity2.ipAddress;
 
-                SharedPreferences settings = getSharedPreferences(Activity2.PREFSTwo,0);
-                IpAddress = settings.getString("ipstring","");
+                SharedPreferences settings2 = getSharedPreferences(Activity2.PREFSTwo,0);
+                IpAddress = settings2.getString("ipstring","");
 
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
@@ -248,22 +248,61 @@ public class MainActivity extends AppCompatActivity {
                     int indA = messageOut.indexOf("ALERT");
                     int indN = messageOut.indexOf("NOTICE");
                     int indD = messageOut.indexOf("DATA");
+                    int indS = messageOut.indexOf("SET");
+
+                    String str = messageOut;
+                    ArrayList nums;
+
+                    str = messageOut.replaceAll("[^-?0-9]+", " ");
+                    nums = new ArrayList(Arrays.asList(str.trim().split(" ")));
 
                     if(indA != -1) {
-                        alertFlag = Integer.parseInt(messageOut.substring(indA + 6, indA + 7));
+                        alertFlag = Integer.parseInt((String) nums.get(0));
                         utils.alert(alertFlag, MainActivity.this);
+
+                        nums.remove(0);
                     }
 
                     if(indN != -1){
-                        noticeFlag = Integer.parseInt(messageOut.substring(indN+7, indN+8));
+                        noticeFlag = Integer.parseInt((String) nums.get(0));
                         utils.notice(noticeFlag, MainActivity.this);
+
+                        nums.remove(0);
                     }
                     if(indD != -1) {
-                        String tempS = messageOut.substring(indD-12, indD-7) + "°F";
-                        String humidS = messageOut.substring(indD-6, indD-2) + "%";
+                        Integer tempInt = Integer.parseInt((String) nums.get(0));
+                        Integer tempDec = Integer.parseInt((String) nums.get(1));
+                        Integer humidInt = Integer.parseInt((String) nums.get(2));
+                        Integer humidDec = Integer.parseInt((String) nums.get(3));
+                        setTempValue = Integer.parseInt((String) nums.get(4));
+                        setHumidValue = Integer.parseInt((String) nums.get(5));
+                        tolTValue = Integer.parseInt((String) nums.get(6));
+                        tolHValue = Integer.parseInt((String) nums.get(7));
+
+                        String tempS = tempInt + "." + tempDec + "°F";
+                        String humidS = humidInt + "." + humidDec + "%";
+                        String output = setTempValue + "°F";
+                        String output2 = setHumidValue + "%";
+                        String output3 = tolTValue + "°F";
+                        String output4 = tolHValue + "%";
+
+                        SharedPreferences settings = getSharedPreferences(PREFS, 0);
+                        SharedPreferences.Editor editor = settings.edit();
+                        editor.putInt("currentSetTemp", setTempValue);
+                        editor.commit();
+                        editor.putInt("currentSetHumid", setHumidValue);
+                        editor.commit();
+                        editor.putInt("currentTolT", tolTValue);
+                        editor.commit();
+                        editor.putInt("currentTolH", tolHValue);
+                        editor.commit();
 
                         ((TextView) findViewById(R.id.currTemp)).setText(tempS);
                         ((TextView) findViewById(R.id.currHumid)).setText(humidS);
+                        ((TextView) findViewById(R.id.setTemp)).setText(output);
+                        ((TextView) findViewById(R.id.setHumid)).setText(output2);
+                        ((TextView) findViewById(R.id.tolT)).setText(output3);
+                        ((TextView) findViewById(R.id.tolH)).setText(output4);
                     }
 
                 }
@@ -276,7 +315,6 @@ public class MainActivity extends AppCompatActivity {
 //                Log.i("CONNECTION STATUS", "disconnected");
             }
         }
-
     }
 
     class keyRunnable implements Runnable {
