@@ -347,18 +347,18 @@
 
         <TextView
             android:id="@+id/textViewHumidTolLabel"
-            android:layout_width="141dp"
-            android:layout_height="47dp"
+            android:layout_width="149dp"
+            android:layout_height="20dp"
             android:text="@string/humidTolLabel"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.846"
+            app:layout_constraintHorizontal_bias="0.844"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.435" />
+            app:layout_constraintVertical_bias="0.473" />
 
         <TextView
             android:id="@+id/ControlsText"

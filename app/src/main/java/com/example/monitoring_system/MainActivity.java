@@ -54,7 +54,7 @@ import java.util.concurrent.Future;
 public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
-    private int setTempValue, setHumidValue, tolTValue, tolHValue, privNum, sendB, alertFlag, noticeFlag;
+    private int setTempValue, setHumidValue, tolTValue, tolHValue, privNum, sendB, alertFlag, noticeFlag, equipFlag;
     private int key = 123;
     private int connection = 1;     // indicates whether connection has been established
     //base 7, mod 2147483647 for C long long
@@ -295,20 +295,32 @@ public class MainActivity extends AppCompatActivity {
                     int indA = messageOut.indexOf("ALERT");
                     int indN = messageOut.indexOf("NOTICE");
                     int indD = messageOut.indexOf("DATA");
-                    int indS = messageOut.indexOf("SET");
-                    String str = messageOut;
+                    int indE = messageOut.indexOf("EQUIP");
+
                     ArrayList nums;
-                    str = messageOut.replaceAll("[^-?0-9]+", " ");
+                    String str = messageOut.replaceAll("[^-?0-9]+", " ");
                     nums = new ArrayList(Arrays.asList(str.trim().split(" ")));
+
+                    if(indE != -1){
+                        equipFlag = Integer.parseInt((String) nums.get(0));
+                        if(equipFlag != 0) {
+                            utils.equip(equipFlag, MainActivity.this);
+                        }
+                        nums.remove(0);
+                    }
                     if(indA != -1) {
                         alertFlag = Integer.parseInt((String) nums.get(0));
-                        utils.alert(alertFlag, MainActivity.this);
+                        if(alertFlag != 0) {
+                            utils.alert(alertFlag, MainActivity.this);
+                        }
                         nums.remove(0);
                     }
 
                     if(indN != -1){
                         noticeFlag = Integer.parseInt((String) nums.get(0));
-                        utils.notice(noticeFlag, MainActivity.this);
+                        if(noticeFlag != 0) {
+                            utils.notice(noticeFlag, MainActivity.this);
+                        }
                         nums.remove(0);
                     }
                     if(indD != -1) {

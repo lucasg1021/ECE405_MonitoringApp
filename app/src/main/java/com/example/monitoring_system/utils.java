@@ -246,7 +246,7 @@ public class utils {
 
     public static void notice(int noticeFlag, Context context){
 
-        // REPLACE COMMENTED CODE WITH NEW "NOTICE" NOTIFICATION
+        // ******** REPLACE COMMENTED CODE WITH NEW "NOTICE" NOTIFICATION ***********
 
 //        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
 //        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
@@ -319,6 +319,92 @@ public class utils {
                 break;
             case 8:
                 Log.i("NOTICE", "TEMP TOO LOW & HUMIDITY TOO LOW");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+
+        }
+    }
+
+    public static void equip(int equipFlag, Context context){
+
+        // *********** REPLACE COMMENTED CODE WITH NEW "EQUIPMENT FAIL" NOTIFICATION *************
+
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+//        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+        switch(equipFlag){
+            case 1:
+                Log.i("EQUIPMENT FAIL", "LAMP IS OFF");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 2:
+                Log.i("EQUIPMENT FAIL", "LAMP IS ON");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 3:
+                Log.i("EQUIPMENT", "MISTER IS ON");
+
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 4:
+                Log.i("EQUIPMENT FAIL", "MISTER IS OFF");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 5:
+                Log.i("EQUIPMENT FAIL", "LAMP & MISTER ARE OFF");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 6:
+                Log.i("EQUIPMENT FAIL", "LAMP IS ON & MISTER IS OFF");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 7:
+                Log.i("EQUIPMENT FAIL", "LAMP IS OFF & MISTER IS ON");
+//                builder.setContentTitle("Enclosure Alert");
+//                builder.setContentText("Hello your temperature is low ");
+//                builder.setSmallIcon(R.drawable.ic_launcher_background);
+//                builder.setAutoCancel(true);
+//
+//                managerCompat.notify(1,builder.build());
+                break;
+            case 8:
+                Log.i("EQUIPMENT FAIL", "LAMP & MISTER ARE ON");
 //                builder.setContentTitle("Enclosure Alert");
 //                builder.setContentText("Hello your temperature is low ");
 //                builder.setSmallIcon(R.drawable.ic_launcher_background);
