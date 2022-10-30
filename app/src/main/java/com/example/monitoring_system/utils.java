@@ -339,78 +339,204 @@ public class utils {
         switch(equipFlag){
             case 1:
                 Log.i("EQUIPMENT FAIL", "LAMP IS OFF");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//
-//                managerCompat.notify(1,builder.build());
+
+                Timer timer9 = new Timer();
+                int begin9 = 1000;              // start timer at 1 second
+                int timeinterval9 = 180 * 1000; //timer executes every 3 minutes
+                timer9.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+                        builder.setContentTitle("Enclosure Alert");
+                        builder.setContentText(" Equipment is failing, lamp is off");
+                        builder.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder.setAutoCancel(true);
+                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat.notify(1,builder.build());
+
+                    }
+                }, begin9, timeinterval9);
+
+
                 break;
             case 2:
                 Log.i("EQUIPMENT FAIL", "LAMP IS ON");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//
-//                managerCompat.notify(1,builder.build());
+
+                Timer timer10 = new Timer();
+                int begin10 = 1000;              // start timer at 1 second
+                int timeinterval10 = 180 * 1000; //timer executes every 3 minutes
+                timer10.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+                        builder.setContentTitle("Enclosure Alert");
+                        builder.setContentText(" Equipment is failing, lamp is on");
+                        builder.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder.setAutoCancel(true);
+                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat.notify(1,builder.build());
+
+                    }
+                }, begin10, timeinterval10);
+
                 break;
             case 3:
                 Log.i("EQUIPMENT", "MISTER IS ON");
 
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+                Timer timer11 = new Timer();
+                int begin11 = 1000;              // start timer at 1 second
+                int timeinterval11 = 180 * 1000; //timer executes every 3 minutes
+                timer11.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+                        builder.setContentTitle("Enclosure Alert");
+                        builder.setContentText(" Equipment; mister is on");
+                        builder.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder.setAutoCancel(true);
+                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat.notify(1,builder.build());
+
+                    }
+                }, begin11, timeinterval11);
+
                 break;
             case 4:
                 Log.i("EQUIPMENT FAIL", "MISTER IS OFF");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                Timer timer12 = new Timer();
+                int begin12 = 1000;              // start timer at 1 second
+                int timeinterval12 = 180 * 1000; //timer executes every 3 minutes
+                timer12.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+                        builder.setContentTitle("Enclosure Alert");
+                        builder.setContentText(" Equipment is failing, mister is off");
+                        builder.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder.setAutoCancel(true);
+                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat.notify(1,builder.build());
+
+                    }
+                }, begin12, timeinterval12);
+
                 break;
             case 5:
                 Log.i("EQUIPMENT FAIL", "LAMP & MISTER ARE OFF");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                Timer timer13 = new Timer();
+                int begin13 = 1000;              // start timer at 1 second
+                int timeinterval13 = 180 * 1000; //timer executes every 3 minutes
+                timer13.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+                        builder.setContentTitle("Enclosure Alert");
+                        builder.setContentText(" Equipment is failing, lamp and mister is off");
+                        builder.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder.setAutoCancel(true);
+                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat.notify(1,builder.build());
+
+                    }
+                }, begin13, timeinterval13);
+
                 break;
             case 6:
                 Log.i("EQUIPMENT FAIL", "LAMP IS ON & MISTER IS OFF");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                Timer timer14 = new Timer();
+                int begin14 = 1000;              // start timer at 1 second
+                int timeinterval14 = 180 * 1000; //timer executes every 3 minutes
+                timer14.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+                        builder.setContentTitle("Enclosure Alert");
+                        builder.setContentText(" Equipment is failing, lamp is on and mister is off");
+                        builder.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder.setAutoCancel(true);
+                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat.notify(1,builder.build());
+
+                    }
+                }, begin14, timeinterval14);
+
                 break;
             case 7:
                 Log.i("EQUIPMENT FAIL", "LAMP IS OFF & MISTER IS ON");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                Timer timer15 = new Timer();
+                int begin15 = 1000;              // start timer at 1 second
+                int timeinterval15 = 180 * 1000; //timer executes every 3 minutes
+                timer15.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+                        builder.setContentTitle("Enclosure Alert");
+                        builder.setContentText(" Equipment is failing, lamp is off and mister is on");
+                        builder.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder.setAutoCancel(true);
+                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat.notify(1,builder.build());
+
+                    }
+                }, begin15, timeinterval15);
+
                 break;
             case 8:
                 Log.i("EQUIPMENT FAIL", "LAMP & MISTER ARE ON");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                Timer timer16 = new Timer();
+                int begin16 = 1000;              // start timer at 1 second
+                int timeinterval16 = 180 * 1000; //timer executes every 3 minutes
+                timer16.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+                        builder.setContentTitle("Enclosure Alert");
+                        builder.setContentText(" Equipment; lamp and mister are on ");
+                        builder.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder.setAutoCancel(true);
+                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat.notify(1,builder.build());
+
+                    }
+                }, begin16, timeinterval16);
+
                 break;
 
         }

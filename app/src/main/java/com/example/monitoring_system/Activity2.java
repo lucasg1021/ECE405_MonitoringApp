@@ -35,17 +35,18 @@ public class Activity2 extends AppCompatActivity {
         submitButton = (Button) findViewById(R.id.submitButton);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {ipAddress = input1.getText().toString();
-             ipAddress = input1.getText().toString();
+            public void onClick(View v) {
+
                 SharedPreferences settings = getSharedPreferences(PREFSTwo, 0);
                 SharedPreferences.Editor editor = settings.edit();
+
+                ipAddress = input1.getText().toString();
                 editor.putString("ipstring", ipAddress);
                 editor.commit();
 
-//                input1.setText(ipAddress);
-
-
-               //portNum = Integer.valueOf(input2.getText().toString());
+                portNum = Integer.valueOf(input2.getText().toString());
+                editor.putInt("Port Number", portNum);
+                editor.commit();
 
             }
         });
@@ -57,7 +58,7 @@ public class Activity2 extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         input1.setText(ipAddress);
-        //input2.setText();
+        input2.setText(portNum);
 
     }
 
