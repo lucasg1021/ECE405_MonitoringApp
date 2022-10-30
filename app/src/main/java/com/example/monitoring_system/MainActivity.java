@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
     private int setTempValue, setHumidValue, tolTValue, tolHValue, privNum, sendB, alertFlag, noticeFlag, equipFlag;
-    private int key = 123;
-    private int connection = 1;     // indicates whether connection has been established
+    private int key;
+    private int connection = 0;     // indicates whether connection has been established
     //base 7, mod 2147483647 for C long long
     int pubMod = 2147483647;
     int pubBase = 7;
@@ -70,10 +70,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences settings = getSharedPreferences(PREFS, 0);
+
+        // initialize values to be saved to memory
         setTempValue = settings.getInt("currentSetTemp", 70);
         setHumidValue = settings.getInt("currentSetHumid", 50);
         tolTValue = settings.getInt("currentTolT", 2);
         tolHValue = settings.getInt("currentTolH", 2);
+
         tTemp = findViewById(R.id.setTemp);
         tHumid = findViewById(R.id.setHumid);
         tempTolView = findViewById(R.id.tolT);
@@ -93,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 openActivity2();
             }
         });
+
         // if connection established and key shared, send requests for temp&humid data
         if(connection != 0) {
             scheduledTaskExecutorUDP.scheduleAtFixedRate(new Runnable() {
@@ -122,10 +126,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // load values from memory on startup
         String outputTemp = setTempValue + "°F";
         String outputHumid = setHumidValue + "%";
         String outputTolT = tolTValue + "°F";
         String outputTolH = tolHValue + "%";
+
+        // update screen with loaded values
         tTemp.setText(outputTemp);
         tHumid.setText(outputHumid);
         tempTolView.setText(outputTolT);
@@ -185,10 +192,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void buttonSubmitSetPoints(View v){
+        // if connection established send new set points/tolerances to MCU
         if(connection == 1) {
+            // stop key sharing and data request runnables
             scheduledTaskExecutorKey.shutdown();
             scheduledTaskExecutorUDP.shutdown();
+
+            // connection = 5 for update set points
             connection = 5;
+
+            // start runnable to tell MCU new set points
             scheduledTaskExecutorSetPoints = Executors.newScheduledThreadPool(5);
             scheduledTaskExecutorSetPoints.scheduleAtFixedRate(new Runnable() {
                 public void run() {
@@ -251,32 +264,47 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tolH)).setText(output);
     }
 
+    /*********** Data request runnable ***********/
+    // handles requesting of data and receiving data, alert flags, and set points from MCU
+    // displays and saves values
+
     class udpRunnable implements Runnable {
 
         @Override
         public void run() {
             try {
+                // get IP addr from memory in settings screen
                 String IpAddress;
                 String PREFSTwo = Activity2.PREFSTwo;
                 IpAddress = Activity2.ipAddress;
                 SharedPreferences settings2 = getSharedPreferences(Activity2.PREFSTwo,0);
                 IpAddress = settings2.getString("ipstring","");
+
                 StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                 StrictMode.setThreadPolicy(policy);
+
+                // send "REQUESTDATA" to MCU in order to receive current temp & humid
                 String msgOut = "REQUESTDATA";
                 int msgLen = msgOut.length();
                 byte[] msg = utils.encrypt(key, msgOut);
                 DatagramSocket socket = new DatagramSocket();
+
+                // send message to set ip addr and portnum
                 DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                 socket.setBroadcast(true);
                 socket.send(packet);
+
+                // initialize array for received msg, set timeout to 10 seconds
                 byte[] msgIn = new byte[4096];
                 DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
                 socket.setSoTimeout(10000);
                 try {
+                    // wait for packet received
                     socket.receive(packetIn);
                     String message = new String(msgIn, 0, packetIn.getLength());
                     Log.i("MESSAGE RECEIVED", message);
+
+                    // if message is unencrypted and contains "STARTUPSEQ", run key sharing runnable
                     if(message.contains("STARTUPSEQ")){
                         connection = 0;
                         scheduledTaskExecutorUDP.shutdown();
@@ -297,17 +325,28 @@ public class MainActivity extends AppCompatActivity {
                     int indD = messageOut.indexOf("DATA");
                     int indE = messageOut.indexOf("EQUIP");
 
+                    // init array to store all numbers in received msg
                     ArrayList nums;
+
+                    // remove all non digits from message and place each int into list
                     String str = messageOut.replaceAll("[^-?0-9]+", " ");
                     nums = new ArrayList(Arrays.asList(str.trim().split(" ")));
 
+                    // received message come in the following format:
+                    // "EQUIP 0 ALERT 0 NOTICE 0 temp humid setT setH tolT tolH DATA"
+
+                    // make sure equipment failure flag is present, get value
                     if(indE != -1){
                         equipFlag = Integer.parseInt((String) nums.get(0));
                         if(equipFlag != 0) {
+                            // if flag is set to nonzero value - send alert
                             utils.equip(equipFlag, MainActivity.this);
                         }
+                        // remove equipment fail flag
                         nums.remove(0);
                     }
+
+                    // make sure alert value is preset, grab and alert if nonzero
                     if(indA != -1) {
                         alertFlag = Integer.parseInt((String) nums.get(0));
                         if(alertFlag != 0) {
@@ -316,6 +355,7 @@ public class MainActivity extends AppCompatActivity {
                         nums.remove(0);
                     }
 
+                    // check for notice value, alert if nonzero
                     if(indN != -1){
                         noticeFlag = Integer.parseInt((String) nums.get(0));
                         if(noticeFlag != 0) {
@@ -323,21 +363,32 @@ public class MainActivity extends AppCompatActivity {
                         }
                         nums.remove(0);
                     }
+
+                    // make sure data is present
                     if(indD != -1) {
+                        // get current temp whole num and decimal reading (will be separate values in list)
                         Integer tempInt = Integer.parseInt((String) nums.get(0));
                         Integer tempDec = Integer.parseInt((String) nums.get(1));
+
+                        // get current humid whole num and decimal
                         Integer humidInt = Integer.parseInt((String) nums.get(2));
                         Integer humidDec = Integer.parseInt((String) nums.get(3));
+
+                        // get set points and tolerances
                         setTempValue = Integer.parseInt((String) nums.get(4));
                         setHumidValue = Integer.parseInt((String) nums.get(5));
                         tolTValue = Integer.parseInt((String) nums.get(6));
                         tolHValue = Integer.parseInt((String) nums.get(7));
+
+                        // format values
                         String tempS = tempInt + "." + tempDec + "°F";
                         String humidS = humidInt + "." + humidDec + "%";
                         String output = setTempValue + "°F";
                         String output2 = setHumidValue + "%";
                         String output3 = tolTValue + "°F";
                         String output4 = tolHValue + "%";
+
+                        // save set points and tols to memory
                         SharedPreferences settings = getSharedPreferences(PREFS, 0);
                         SharedPreferences.Editor editor = settings.edit();
                         editor.putInt("currentSetTemp", setTempValue);
@@ -348,6 +399,8 @@ public class MainActivity extends AppCompatActivity {
                         editor.commit();
                         editor.putInt("currentTolH", tolHValue);
                         editor.commit();
+
+                        // display formatted strings
                         ((TextView) findViewById(R.id.currTemp)).setText(tempS);
                         ((TextView) findViewById(R.id.currHumid)).setText(humidS);
                         ((TextView) findViewById(R.id.setTemp)).setText(output);
@@ -369,16 +422,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*********** Key sharing runnable ***********/
+    // handles key exchange algorithm
+
     class keyRunnable implements Runnable {
 
         @Override
         public void run() {
-            // begin the key exchange sequence
+            // begin the key exchange sequence if no key
             if (connection == 0) {
                 try {
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                     StrictMode.setThreadPolicy(policy);
-                    // send message to ip and port
+
+                    // send message to begin startup
                     String msgOut = "STARTUP";
                     int msgLen = msgOut.length();
                     byte[] msg = msgOut.getBytes(StandardCharsets.UTF_8);
@@ -386,6 +443,7 @@ public class MainActivity extends AppCompatActivity {
                     DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                     socket.setBroadcast(true);
                     socket.send(packet);
+
                     // set timer for timeout, wait for packet
                     long startTime = System.currentTimeMillis();
                     long endTime = startTime + 10000;
@@ -396,11 +454,22 @@ public class MainActivity extends AppCompatActivity {
                         socket.receive(packetIn);
                         String message = new String(msgIn, 0, packetIn.getLength());
                         Log.i("MESSAGE RECEIVED", message);
+
+                        // init array to store all numbers in received msg
+                        ArrayList nums;
+
+                        // remove all non digits from message and place each int into list
+                        String str = message.replaceAll("[^-?0-9]+", " ");
+                        nums = new ArrayList(Arrays.asList(str.trim().split(" ")));
+
+                        // MCU will respond with ACK as well as set points to ensure both devices
+                        // have same values
                         if (message.contains("ACK")) {
-                            setTempValue = Integer.parseInt(message.substring(4, 6));
-                            setHumidValue = Integer.parseInt(message.substring(7, 9));
-                            tolTValue = Integer.parseInt(message.substring(10, 11));
-                            tolHValue = Integer.parseInt(message.substring(12, 13));
+                            setTempValue = Integer.parseInt((String) nums.get(0));
+                            setHumidValue = Integer.parseInt((String) nums.get(1));
+                            tolTValue = Integer.parseInt((String) nums.get(2));
+                            tolHValue = Integer.parseInt((String) nums.get(3));
+
                             String output = setTempValue + "°F";
                             // display
                             ((TextView) findViewById(R.id.setTemp)).setText(output);
@@ -416,6 +485,8 @@ public class MainActivity extends AppCompatActivity {
                             String output4 = tolHValue + "%";
                             // display
                             ((TextView) findViewById(R.id.tolH)).setText(output4);
+
+                            // save values to memory
                             SharedPreferences settings = getSharedPreferences(PREFS, 0);
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putInt("currentSetTemp", setTempValue);
@@ -426,7 +497,11 @@ public class MainActivity extends AppCompatActivity {
                             editor.commit();
                             editor.putInt("currentTolH", tolHValue);
                             editor.commit();
+
+                            // set connection flag to send public key and wait for the other
                             connection = 2;
+
+                            // generate private integer and calculate public key
                             privNum = new Random().nextInt(9) + 1;
                             sendB = Math.toIntExact(Math.round(Math.pow(pubBase, privNum) % pubMod));
                         }
@@ -452,8 +527,7 @@ public class MainActivity extends AppCompatActivity {
                     DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                     socket.setBroadcast(true);
                     socket.send(packet);
-                    long startTime = System.currentTimeMillis();
-                    long endTime = startTime + 60000;
+
                     byte[] msgIn = new byte[4096];
                     DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
                     socket.setSoTimeout(10000);
@@ -462,12 +536,16 @@ public class MainActivity extends AppCompatActivity {
                         String message = new String(msgIn, 0, packetIn.getLength());
                         Log.i("MESSAGE RECEIVED", message);
                         if (message.contains("ACK")) {
-                            // remove non digits from string
+                            // remove non digits from string, get MCU's public key
                             message = message.replaceAll("\\D+","");
                             Integer A = Integer.parseInt(message);
+
+                            // calculate key, set connection to 1 for request data
                             key = Math.toIntExact(Math.round(Math.pow(A, privNum) % pubMod));
                             connection = 1;
                             Log.i("KEY", String.valueOf(key));
+
+                            // stop key sharing runnable, start data req runnable
                             scheduledTaskExecutorKey.shutdown();
                             scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
                             scheduledTaskExecutorUDP.scheduleAtFixedRate(new Runnable() {
@@ -490,16 +568,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    /*********** Update set point runnable ***********/
+    // notifies MCU of set point change and sends values
     class setPointRunnable implements Runnable {
 
         @Override
         public void run() {
-            // begin the key exchange sequence
             if(connection == 5){
                 try {
                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
                     StrictMode.setThreadPolicy(policy);
-                    // send message to ip and port
+
+                    // send message with updated values
                     String msgOut =  "SETPOINTS " + setTempValue + " " + setHumidValue + " " + tolTValue + " " + tolHValue + " DONE";
                     int msgLen = msgOut.length();
                     byte[] msg = utils.encrypt(key, msgOut);
@@ -507,22 +588,34 @@ public class MainActivity extends AppCompatActivity {
                     DatagramPacket packet = new DatagramPacket(msg, msgLen, InetAddress.getByName("23.127.196.133"), 54321);
                     socket.setBroadcast(true);
                     socket.send(packet);
+
                     // set timer for timeout, wait for packet
-                    long startTime = System.currentTimeMillis();
-                    long endTime = startTime + 10000;
                     byte[] msgIn = new byte[4096];
                     DatagramPacket packetIn = new DatagramPacket(msgIn, msgIn.length);
                     socket.setSoTimeout(10000);
                     try {
                         socket.receive(packetIn);
+
+                        // decrypt received message
                         String message = new String(msgIn, 0, packetIn.getLength());
                         Log.i("MESSAGE RECEIVED", message);
                         String messageOut = utils.decrypt(key, msgIn);
+
+                        // init array to store all numbers in received msg
+                        ArrayList nums;
+
+                        // remove all non digits from message and place each int into list
+                        String str = messageOut.replaceAll("[^-?0-9]+", " ");
+                        nums = new ArrayList(Arrays.asList(str.trim().split(" ")));
+
+                        // MCU will echo back set points to ensure both devices are the same
+                        // change set points to echoed values
                         if (messageOut.contains("ACK")) {
-                            setTempValue = Integer.parseInt(messageOut.substring(4, 6));
-                            setHumidValue = Integer.parseInt(messageOut.substring(7, 9));
-                            tolTValue = Integer.parseInt(messageOut.substring(10, 11));
-                            tolHValue = Integer.parseInt(messageOut.substring(12, 13));
+                            setTempValue = Integer.parseInt((String) nums.get(0));
+                            setHumidValue = Integer.parseInt((String) nums.get(1));
+                            tolTValue = Integer.parseInt((String) nums.get(2));
+                            tolHValue = Integer.parseInt((String) nums.get(3));
+
                             String output = setTempValue + "°F";
                             // display
                             ((TextView) findViewById(R.id.setTemp)).setText(output);
@@ -538,6 +631,8 @@ public class MainActivity extends AppCompatActivity {
                             String output4 = tolHValue + "%";
                             // display
                             ((TextView) findViewById(R.id.tolH)).setText(output4);
+
+                            // save values to memory
                             SharedPreferences settings = getSharedPreferences(PREFS, 0);
                             SharedPreferences.Editor editor = settings.edit();
                             editor.putInt("currentSetTemp", setTempValue);
