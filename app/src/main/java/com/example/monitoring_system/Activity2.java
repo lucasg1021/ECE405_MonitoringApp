@@ -44,7 +44,7 @@ public class Activity2 extends AppCompatActivity {
                 editor.putString("ipstring", ipAddress);
                 editor.commit();
 
-                portNum = Integer.valueOf(input2.getText().toString());
+                portNum = Integer.parseInt(input2.getText().toString());
                 editor.putInt("Port Number", portNum);
                 editor.commit();
 
@@ -58,7 +58,7 @@ public class Activity2 extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         input1.setText(ipAddress);
-        input2.setText(portNum);
+        input2.setText(String.valueOf(portNum));
 
     }
 

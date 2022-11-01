@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     ScheduledExecutorService scheduledTaskExecutorKey = Executors.newScheduledThreadPool(5);
     ScheduledExecutorService scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
     ScheduledExecutorService scheduledTaskExecutorSetPoints = Executors.newScheduledThreadPool(5);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,12 +82,12 @@ public class MainActivity extends AppCompatActivity {
         tHumid = findViewById(R.id.setHumid);
         tempTolView = findViewById(R.id.tolT);
         humidTolView = findViewById(R.id.tolH);
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("My Notification","My Notification", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
-
 
         menuTwo = (Button) findViewById(R.id.switchButton);
         menuTwo.setOnClickListener(new View.OnClickListener() {
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
                 openActivity2();
             }
         });
+
         // if connection established and key shared, send requests for temp&humid data
         if(connection != 0) {
             scheduledTaskExecutorUDP.scheduleAtFixedRate(new Runnable() {
