@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.icu.lang.UCharacter;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.util.Log;
 import android.os.Bundle;
@@ -54,9 +56,10 @@ import java.util.concurrent.Future;
 public class MainActivity extends AppCompatActivity {
 
     public static final String PREFS = "MyPrefs";
-    private int setTempValue, setHumidValue, tolTValue, tolHValue, privNum, sendB, alertFlag, noticeFlag, equipFlag;
-    private int key;
-    private int connection = 0;     // indicates whether connection has been established
+    private int setTempValue, setHumidValue, tolTValue, tolHValue, privNum, sendB, alertFlag, noticeFlag, equipFlag, lampOn, misterOn;
+    private int key = 123;
+    private int sendNotifTimer = 0;
+    private int connection = 1;     // indicates whether connection has been established
     //base 7, mod 2147483647 for C long long
     int pubMod = 2147483647;
     int pubBase = 7;
@@ -65,6 +68,11 @@ public class MainActivity extends AppCompatActivity {
     ScheduledExecutorService scheduledTaskExecutorKey = Executors.newScheduledThreadPool(5);
     ScheduledExecutorService scheduledTaskExecutorUDP = Executors.newScheduledThreadPool(5);
     ScheduledExecutorService scheduledTaskExecutorSetPoints = Executors.newScheduledThreadPool(5);
+
+    CountDownTimer timer1 = null;
+    CountDownTimer timer2 = null;
+
+    ImageView lampOffView, lampOnView, misterOffView, misterOnView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,12 +90,68 @@ public class MainActivity extends AppCompatActivity {
         tHumid = findViewById(R.id.setHumid);
         tempTolView = findViewById(R.id.tolT);
         humidTolView = findViewById(R.id.tolH);
+        lampOffView = (ImageView)findViewById(R.id.imageView7);
+        lampOnView = (ImageView)findViewById(R.id.imageView8);
+        misterOffView = (ImageView)findViewById(R.id.imageView9);
+        misterOnView = (ImageView)findViewById(R.id.imageView10);
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("My Notification","My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+        lampOnView.setVisibility(View.INVISIBLE);
+        lampOffView.setVisibility(View.VISIBLE);
+        misterOnView.setVisibility(View.INVISIBLE);
+        misterOffView.setVisibility(View.VISIBLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
+
+            NotificationChannel channel2 = new NotificationChannel("Notification2", "Notification2", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager2 = getSystemService(NotificationManager.class);
+            manager2.createNotificationChannel(channel2);
+
+            NotificationChannel channel3 = new NotificationChannel("Notification3", "Notification3", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager3 = getSystemService(NotificationManager.class);
+            manager3.createNotificationChannel(channel3);
+
+            NotificationChannel channel4 = new NotificationChannel("Notification4", "Notification4", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager4 = getSystemService(NotificationManager.class);
+            manager4.createNotificationChannel(channel4);
         }
+
+
+                           timer1 = new CountDownTimer(10000, 1000) {
+
+                                public void onTick(long millisUntilFinished) {
+                                       if( sendNotifTimer == 1){
+                                            timer2.start();
+                                            sendNotifTimer = 2;
+
+                               }
+                                }
+
+                                public void onFinish(){
+                                    timer1.start();
+
+                                }
+
+                            };
+        timer1.start();
+
+        timer2 = new CountDownTimer(60000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+
+
+            }
+
+            public void onFinish() {
+
+                sendNotifTimer = 0;
+
+            }
+
+        };
+
 
         menuTwo = (Button) findViewById(R.id.switchButton);
         menuTwo.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                     udpRunnable runnable = new udpRunnable();
                     new Thread(runnable).start();
                 }
-            }, 0, 5000, TimeUnit.MILLISECONDS);
+            }, 0, 10000, TimeUnit.MILLISECONDS);
         }
         // else try to send encryption data to MCU
         else {
@@ -190,6 +254,34 @@ public class MainActivity extends AppCompatActivity {
         String output = setHumidValue + "%";
         // display
         ((TextView) findViewById(R.id.setHumid)).setText(output);
+    }
+
+    public void onOffLamp(View v) {
+
+//             img7 = (ImageView)findViewById(R.id.imageView7);
+//             img8 = (ImageView)findViewById(R.id.imageView8);
+//
+//             img7.setVisibility(View.INVISIBLE);
+//             img8.setVisibility(View.INVISIBLE);
+//
+//             if()
+//             {
+//
+//             }
+    }
+
+    public void onOffMister(View v) {
+
+//        img9 = (ImageView) findViewById(R.id.imageView9);
+//        img10 = (ImageView) findViewById(R.id.imageView10);
+//
+//        img7.setVisibility(View.INVISIBLE);
+//        img8.setVisibility(View.INVISIBLE);
+//
+//        if () {
+//
+//
+//        }
     }
 
     public void buttonSubmitSetPoints(View v){
@@ -324,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
                     // decode
                     String messageOut = utils.decrypt(key, msgIn);
                     int indA = messageOut.indexOf("ALERT");
+                    int indS = messageOut.indexOf("STATUS");
                     int indN = messageOut.indexOf("NOTICE");
                     int indD = messageOut.indexOf("DATA");
                     int indE = messageOut.indexOf("EQUIP");
@@ -339,9 +432,74 @@ public class MainActivity extends AppCompatActivity {
                     // "EQUIP 0 ALERT 0 NOTICE 0 temp humid setT setH tolT tolH DATA"
 
                     // make sure equipment failure flag is present, get value
+
+                    if(indS != -1){
+                        lampOffView = (ImageView)findViewById(R.id.imageView7);
+                        lampOnView = (ImageView)findViewById(R.id.imageView8);
+                        misterOffView = (ImageView)findViewById(R.id.imageView9);
+                        misterOnView = (ImageView)findViewById(R.id.imageView10);
+                        lampOn = Integer.parseInt((String) nums.get(0));
+                        nums.remove(0);
+                        misterOn = Integer.parseInt((String) nums.get(0));
+                        nums.remove(0);
+
+                        if(lampOn == 1){
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    lampOnView.setVisibility(View.VISIBLE);
+                                    lampOffView.setVisibility(View.INVISIBLE);
+
+                                }
+                            });
+
+                        }
+                        else{
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    lampOffView.setVisibility(View.VISIBLE);
+                                    lampOnView.setVisibility(View.INVISIBLE);
+
+                                }
+                            });
+
+                        }
+
+                        if(misterOn == 1){
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    misterOnView.setVisibility(View.VISIBLE);
+                                    misterOffView.setVisibility(View.INVISIBLE);
+
+                                }
+                            });
+
+                        }
+                        else{
+                            runOnUiThread(new Runnable() {
+
+                                @Override
+                                public void run() {
+
+                                    misterOffView.setVisibility(View.VISIBLE);
+                                    misterOnView.setVisibility(View.INVISIBLE);
+
+                                }
+                            });
+                        }
+                    }
+
                     if(indE != -1){
                         equipFlag = Integer.parseInt((String) nums.get(0));
-                        if(equipFlag != 0) {
+                        if(equipFlag != 0 && sendNotifTimer == 0){
                             // if flag is set to nonzero value - send alert
                             utils.equip(equipFlag, MainActivity.this);
                         }
@@ -349,22 +507,30 @@ public class MainActivity extends AppCompatActivity {
                         nums.remove(0);
                     }
 
+
+
                     // make sure alert value is preset, grab and alert if nonzero
                     if(indA != -1) {
                         alertFlag = Integer.parseInt((String) nums.get(0));
-                        if(alertFlag != 0) {
+                        if(alertFlag != 0 && sendNotifTimer == 0) {
                             utils.alert(alertFlag, MainActivity.this);
                         }
                         nums.remove(0);
                     }
 
+
+
                     // check for notice value, alert if nonzero
                     if(indN != -1){
                         noticeFlag = Integer.parseInt((String) nums.get(0));
-                        if(noticeFlag != 0) {
+                        if(noticeFlag != 0 && sendNotifTimer == 0) {
                             utils.notice(noticeFlag, MainActivity.this);
                         }
                         nums.remove(0);
+                    }
+
+                    if(sendNotifTimer == 0){
+                        sendNotifTimer = 1;
                     }
 
                     // make sure data is present
@@ -514,7 +680,7 @@ public class MainActivity extends AppCompatActivity {
                             connection = 2;
 
                             // generate private integer and calculate public key
-                            privNum = new Random().nextInt(9) + 1;
+                            privNum = new Random().nextInt(9) + 2;
                             sendB = Math.toIntExact(Math.round(Math.pow(pubBase, privNum) % pubMod));
                         }
                     } catch (SocketTimeoutException e) {

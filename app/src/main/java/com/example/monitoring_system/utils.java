@@ -1,6 +1,7 @@
 package com.example.monitoring_system;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
@@ -13,7 +14,11 @@ import java.util.TimerTask;
 
 public class utils {
 
+
     private Context context;
+    private int equipTimerFlag = 0;
+    private static int alertTimerFlag2;
+    private int noticeTimerFlag3 = 0;
 
     public static String decrypt(int key, byte[] msgIn){
         byte[] messageOutBytes = new byte[msgIn.length];
@@ -41,203 +46,130 @@ public class utils {
 
     public static void alert(int alertFlag, Context context){
 
+        String enc1 = "Enclosure Alert";
 
         switch(alertFlag){
             case 1:
 
                 Log.i("ALERT", "TEMP TOO HIGH");
 
-                Timer timer = new Timer();
-                int begin = 1000;              // start timer at 1 second
-                int timeinterval = 180 * 1000; //timer executes every 3 minutes
-                timer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "My Notification");
+                    NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                    builder.setContentTitle(enc1);
+                    builder.setContentText("Hello your temperature is too high ");
+                    builder.setSmallIcon(R.drawable.ic_notify_pic);
+                    builder.setAutoCancel(true);
+                    builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText("Hello your temperature is too high ");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-                    }
-                }, begin, timeinterval);
-
-
+                    managerCompat.notify(enc1.hashCode(), builder.build());
 
                 break;
             case 2:
 
                 Log.i("ALERT", "TEMP TOO LOW");
 
-                Timer timer2 = new Timer();
-                int begin2 = 1000;              // start timer at 1 second
-                int timeinterval2 = 180 * 1000; //timer executes every 3 minutes
-                timer2.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder1 = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat1 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder1.setContentTitle(enc1);
+                        builder1.setContentText("Hello your temperature is too low ");
+                        builder1.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder1.setAutoCancel(true);
+                        builder1.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText("Hello your temperature is too low ");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-                    }
-                }, begin2, timeinterval2);
+                        managerCompat1.notify(enc1.hashCode() ,builder1.build());
 
                 break;
             case 3:
                 Log.i("ALERT", "HUMIDITY TOO HIGH");
 
-                Timer timer3 = new Timer();
-                int begin3 = 1000;              // start timer at 1 second
-                int timeinterval3 = 180 * 1000; //timer executes every 3 minutes
-                timer3.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder2 = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat2 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder2.setContentTitle(enc1);
+                        builder2.setContentText("Hello your humidity too high");
+                        builder2.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder2.setAutoCancel(true);
+                        builder2.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText("Hello your humidity too high");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-                    }
-                }, begin3, timeinterval3);
+                        managerCompat2.notify(enc1.hashCode() ,builder2.build());
 
                 break;
             case 4:
                 Log.i("ALERT", "HUMIDITY TOO LOW");
 
-                Timer timer4 = new Timer();
-                int begin4 = 1000;              // start timer at 1 second
-                int timeinterval4 = 180 * 1000; //timer executes every 3 minutes
-                timer4.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        NotificationCompat.Builder builder3 = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat3 = NotificationManagerCompat.from(context);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText("Hello your humidity is too low ");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+                        builder3.setContentTitle(enc1);
+                        builder3.setContentText("Hello your humidity is too low ");
+                        builder3.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder3.setAutoCancel(true);
+                        builder3.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        managerCompat.notify(1,builder.build());
-                    }
-                }, begin4, timeinterval4);
+                        managerCompat3.notify(enc1.hashCode() ,builder3.build());
 
                 break;
             case 5:
                 Log.i("ALERT", "TEMP TOO HIGH & HUMIDITY TOO HIGH");
 
-                Timer timer5 = new Timer();
-                int begin5 = 1000;              // start timer at 1 second
-                int timeinterval5 = 180 * 1000; //timer executes every 3 minutes
-                timer5.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder4 = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat4 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder4.setContentTitle(enc1);
+                        builder4.setContentText("Hello your temperature and humidity are too high ");
+                        builder4.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder4.setAutoCancel(true);
+                        builder4.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText("Hello your temperature and humidity are too high ");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-                    }
-                }, begin5, timeinterval5);
+                        managerCompat4.notify(enc1.hashCode() ,builder4.build());
 
                 break;
             case 6:
                 Log.i("ALERT", "TEMP TOO LOW & HUMIDITY TOO HIGH");
 
-                Timer timer6 = new Timer();
-                int begin6 = 1000;              // start timer at 1 second
-                int timeinterval6 = 180 * 1000; //timer executes every 3 minutes
-                timer6.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder5 = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat5 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder5.setContentTitle(enc1);
+                        builder5.setContentText("Hello your temperature is too low and humidity is too high ");
+                        builder5.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder5.setAutoCancel(true);
+                        builder5.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText("Hello your temperature is too low and humidity is too high ");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-                    }
-                }, begin6, timeinterval6);
+                        managerCompat5.notify(enc1.hashCode() ,builder5.build());
 
                 break;
             case 7:
                 Log.i("ALERT", "TEMP TOO HIGH & HUMIDITY TOO LOW");
 
-                Timer timer7 = new Timer();
-                int begin7 = 1000;              // start timer at 1 second
-                int timeinterval7 = 180 * 1000; //timer executes every 3 minutes
-                timer7.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder6 = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat6 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder6.setContentTitle(enc1);
+                        builder6.setContentText("Hello your temperature is too high and humidity is too low ");
+                        builder6.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder6.setAutoCancel(true);
+                        builder6.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText("Hello your temperature is too high and humidity is too low ");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-                    }
-                }, begin7, timeinterval7);
+                        managerCompat6.notify(enc1.hashCode() ,builder6.build());
 
                 break;
             case 8:
                 Log.i("ALERT", "TEMP TOO LOW & HUMIDITY TOO LOW");
 
-                Timer timer8 = new Timer();
-                int begin8 = 1000;              // start timer at 1 second
-                int timeinterval8 = 180 * 1000; //timer executes every 3 minutes
-                timer8.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder7 = new NotificationCompat.Builder(context,"My Notification");
+                        NotificationManagerCompat managerCompat7 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder7.setContentTitle(enc1);
+                        builder7.setContentText("Hello your temperature and humidity are too low ");
+                        builder7.setSmallIcon(R.drawable.ic_notify_pic);
+                        builder7.setAutoCancel(true);
+                        builder7.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText("Hello your temperature and humidity are too low ");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin8, timeinterval8);
+                        managerCompat7.notify(enc1.hashCode() ,builder7.build());
 
                 break;
 
@@ -250,81 +182,129 @@ public class utils {
 
 //        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
 //        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+        String enc2 = "Enclosure Notice";
+
         switch(noticeFlag){
             case 1:
                 Log.i("NOTICE", "TEMP TOO HIGH");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//
-//                managerCompat.notify(1,builder.build());
+
+                NotificationCompat.Builder builder8 = new NotificationCompat.Builder(context,"Notification2");
+                NotificationManagerCompat managerCompat8 = NotificationManagerCompat.from(context);
+
+                builder8.setContentTitle(enc2);
+                builder8.setContentText(" Temperature is too high");
+                builder8.setSmallIcon(R.drawable.ic_launcher_foreground);
+                builder8.setAutoCancel(true);
+                builder8.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat8.notify(enc2.hashCode() ,builder8.build());
+
                 break;
             case 2:
                 Log.i("NOTICE", "TEMP TOO LOW");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//
-//                managerCompat.notify(1,builder.build());
+
+                        NotificationCompat.Builder builder9 = new NotificationCompat.Builder(context,"Notification2");
+                        NotificationManagerCompat managerCompat9 = NotificationManagerCompat.from(context);
+
+                        builder9.setContentTitle(enc2);
+                        builder9.setContentText(" Temperature is too low");
+                        builder9.setSmallIcon(R.drawable.ic_launcher_background);
+                        builder9.setAutoCancel(true);
+                        builder9.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                        managerCompat9.notify(enc2.hashCode() ,builder9.build());
+
                 break;
             case 3:
                 Log.i("NOTICE", "HUMIDITY TOO HIGH");
 
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+                NotificationCompat.Builder builder10 = new NotificationCompat.Builder(context,"Notification2");
+                NotificationManagerCompat managerCompat10 = NotificationManagerCompat.from(context);
+
+                builder10.setContentTitle(enc2);
+                builder10.setContentText(" Humidity is too high");
+                builder10.setSmallIcon(R.drawable.ic_launcher_background);
+                builder10.setAutoCancel(true);
+                builder10.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat10.notify(enc2.hashCode() ,builder10.build());
+
                 break;
             case 4:
                 Log.i("NOTICE", "HUMIDITY TOO LOW");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                NotificationCompat.Builder builder11 = new NotificationCompat.Builder(context,"Notification2");
+                NotificationManagerCompat managerCompat11 = NotificationManagerCompat.from(context);
+
+                builder11.setContentTitle(enc2);
+                builder11.setContentText(" humidity is too low");
+                builder11.setSmallIcon(R.drawable.ic_launcher_background);
+                builder11.setAutoCancel(true);
+                builder11.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat11.notify(enc2.hashCode() ,builder11.build());
+
                 break;
             case 5:
                 Log.i("NOTICE", "TEMP TOO HIGH & HUMIDITY TOO HIGH");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                NotificationCompat.Builder builder12 = new NotificationCompat.Builder(context,"Notification2");
+                NotificationManagerCompat managerCompat12 = NotificationManagerCompat.from(context);
+
+                builder12.setContentTitle(enc2);
+                builder12.setContentText(" Temperature and humidity are too high");
+                builder12.setSmallIcon(R.drawable.ic_launcher_background);
+                builder12.setAutoCancel(true);
+                builder12.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat12.notify(enc2.hashCode() ,builder12.build());
+
                 break;
             case 6:
                 Log.i("NOTICE", "TEMP TOO LOW & HUMIDITY TOO HIGH");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                NotificationCompat.Builder builder13 = new NotificationCompat.Builder(context,"Notification2");
+                NotificationManagerCompat managerCompat13 = NotificationManagerCompat.from(context);
+
+                builder13.setContentTitle(enc2);
+                builder13.setContentText(" Temperature is too low and humidity too high");
+                builder13.setSmallIcon(R.drawable.ic_launcher_background);
+                builder13.setAutoCancel(true);
+                builder13.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat13.notify(enc2.hashCode() ,builder13.build());
+
                 break;
             case 7:
                 Log.i("NOTICE", "TEMP TOO HIGH & HUMIDITY TOO LOW");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                NotificationCompat.Builder builder14 = new NotificationCompat.Builder(context,"Notification2");
+                NotificationManagerCompat managerCompat14 = NotificationManagerCompat.from(context);
+
+                builder14.setContentTitle(enc2);
+                builder14.setContentText(" Temperature is too high and humidity is too low");
+                builder14.setSmallIcon(R.drawable.ic_launcher_background);
+                builder14.setAutoCancel(true);
+                builder14.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat14.notify(enc2.hashCode() ,builder14.build());
+
                 break;
             case 8:
                 Log.i("NOTICE", "TEMP TOO LOW & HUMIDITY TOO LOW");
-//                builder.setContentTitle("Enclosure Alert");
-//                builder.setContentText("Hello your temperature is low ");
-//                builder.setSmallIcon(R.drawable.ic_launcher_background);
-//                builder.setAutoCancel(true);
-//
-//                managerCompat.notify(1,builder.build());
+
+                NotificationCompat.Builder builder15 = new NotificationCompat.Builder(context,"Notification2");
+                NotificationManagerCompat managerCompat15 = NotificationManagerCompat.from(context);
+
+                builder15.setContentTitle(enc2);
+                builder15.setContentText(" Temperature and humidity are too low");
+                builder15.setSmallIcon(R.drawable.ic_launcher_background);
+                builder15.setAutoCancel(true);
+                builder15.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+                managerCompat15.notify(enc2.hashCode() ,builder15.build());
+
                 break;
 
         }
@@ -336,206 +316,128 @@ public class utils {
 
 //        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
 //        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+
+        String enc3 = "Equipment Fail";
+
         switch(equipFlag){
             case 1:
                 Log.i("EQUIPMENT FAIL", "LAMP IS OFF");
 
-                Timer timer9 = new Timer();
-                int begin9 = 1000;              // start timer at 1 second
-                int timeinterval9 = 180 * 1000; //timer executes every 3 minutes
-                timer9.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder16 = new NotificationCompat.Builder(context,"Notification3");
+                        NotificationManagerCompat managerCompat16 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder16.setContentTitle(enc3);
+                        builder16.setContentText(" Equipment is failing, lamp is off");
+                        builder16.setSmallIcon(R.drawable.ic_launcher_foreground);
+                        builder16.setAutoCancel(true);
+                        builder16.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText(" Equipment is failing, lamp is off");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin9, timeinterval9);
-
+                        managerCompat16.notify(enc3.hashCode() ,builder16.build());
 
                 break;
             case 2:
                 Log.i("EQUIPMENT FAIL", "LAMP IS ON");
 
-                Timer timer10 = new Timer();
-                int begin10 = 1000;              // start timer at 1 second
-                int timeinterval10 = 180 * 1000; //timer executes every 3 minutes
-                timer10.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder17 = new NotificationCompat.Builder(context,"Notification3");
+                        NotificationManagerCompat managerCompat17 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder17.setContentTitle(enc3);
+                        builder17.setContentText(" Equipment is failing, lamp is on");
+                        builder17.setSmallIcon(R.drawable.ic_launcher_foreground);
+                        builder17.setAutoCancel(true);
+                        builder17.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText(" Equipment is failing, lamp is on");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin10, timeinterval10);
+                        managerCompat17.notify(enc3.hashCode() ,builder17.build());
 
                 break;
             case 3:
-                Log.i("EQUIPMENT", "MISTER IS ON");
+                Log.i("EQUIPMENT", "MISTER IS OFF");
 
-                Timer timer11 = new Timer();
-                int begin11 = 1000;              // start timer at 1 second
-                int timeinterval11 = 180 * 1000; //timer executes every 3 minutes
-                timer11.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder18 = new NotificationCompat.Builder(context,"Notification3");
+                        NotificationManagerCompat managerCompat18 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder18.setContentTitle(enc3);
+                        builder18.setContentText(" Equipment; mister is off");
+                        builder18.setSmallIcon(R.drawable.ic_launcher_foreground);
+                        builder18.setAutoCancel(true);
+                        builder18.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText(" Equipment; mister is on");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin11, timeinterval11);
+                        managerCompat18.notify(enc3.hashCode() ,builder18.build());
 
                 break;
             case 4:
-                Log.i("EQUIPMENT FAIL", "MISTER IS OFF");
+                Log.i("EQUIPMENT FAIL", "MISTER IS ON");
 
-                Timer timer12 = new Timer();
-                int begin12 = 1000;              // start timer at 1 second
-                int timeinterval12 = 180 * 1000; //timer executes every 3 minutes
-                timer12.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder19 = new NotificationCompat.Builder(context,"Notification3");
+                        NotificationManagerCompat managerCompat19 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder19.setContentTitle(enc3);
+                        builder19.setContentText(" Equipment, mister on");
+                        builder19.setSmallIcon(R.drawable.ic_launcher_foreground);
+                        builder19.setAutoCancel(true);
+                        builder19.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText(" Equipment is failing, mister is off");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin12, timeinterval12);
+                        managerCompat19.notify(enc3.hashCode() ,builder19.build());
 
                 break;
             case 5:
                 Log.i("EQUIPMENT FAIL", "LAMP & MISTER ARE OFF");
 
-                Timer timer13 = new Timer();
-                int begin13 = 1000;              // start timer at 1 second
-                int timeinterval13 = 180 * 1000; //timer executes every 3 minutes
-                timer13.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder20 = new NotificationCompat.Builder(context,"Notification3");
+                        NotificationManagerCompat managerCompat20 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder20.setContentTitle(enc3);
+                        builder20.setContentText(" Equipment is failing, lamp and mister are off");
+                        builder20.setSmallIcon(R.drawable.ic_launcher_foreground);
+                        builder20.setAutoCancel(true);
+                        builder20.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText(" Equipment is failing, lamp and mister is off");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin13, timeinterval13);
+                        managerCompat20.notify(enc3.hashCode() ,builder20.build());
 
                 break;
             case 6:
                 Log.i("EQUIPMENT FAIL", "LAMP IS ON & MISTER IS OFF");
 
-                Timer timer14 = new Timer();
-                int begin14 = 1000;              // start timer at 1 second
-                int timeinterval14 = 180 * 1000; //timer executes every 3 minutes
-                timer14.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder21 = new NotificationCompat.Builder(context,"Notification3");
+                        NotificationManagerCompat managerCompat21 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder21.setContentTitle(enc3);
+                        builder21.setContentText(" Equipment is failing, lamp is on and mister is off");
+                        builder21.setSmallIcon(R.drawable.ic_launcher_foreground);
+                        builder21.setAutoCancel(true);
+                        builder21.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText(" Equipment is failing, lamp is on and mister is off");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin14, timeinterval14);
+                        managerCompat21.notify(enc3.hashCode() ,builder21.build());
 
                 break;
             case 7:
                 Log.i("EQUIPMENT FAIL", "LAMP IS OFF & MISTER IS ON");
 
-                Timer timer15 = new Timer();
-                int begin15 = 1000;              // start timer at 1 second
-                int timeinterval15 = 180 * 1000; //timer executes every 3 minutes
-                timer15.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder22 = new NotificationCompat.Builder(context,"Notification3");
+                        NotificationManagerCompat managerCompat22 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder22.setContentTitle(enc3);
+                        builder22.setContentText(" Equipment is failing, lamp is off and mister is on");
+                        builder22.setSmallIcon(R.drawable.ic_launcher_foreground);
+                        builder22.setAutoCancel(true);
+                        builder22.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText(" Equipment is failing, lamp is off and mister is on");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin15, timeinterval15);
+                        managerCompat22.notify(enc3.hashCode() ,builder22.build());
 
                 break;
             case 8:
                 Log.i("EQUIPMENT FAIL", "LAMP & MISTER ARE ON");
 
-                Timer timer16 = new Timer();
-                int begin16 = 1000;              // start timer at 1 second
-                int timeinterval16 = 180 * 1000; //timer executes every 3 minutes
-                timer16.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
+                        NotificationCompat.Builder builder23 = new NotificationCompat.Builder(context,"Notification3");
+                        NotificationManagerCompat managerCompat23 = NotificationManagerCompat.from(context);
 
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,"My Notification");
-                        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(context);
+                        builder23.setContentTitle(enc3);
+                        builder23.setContentText(" Equipment; lamp and mister are on ");
+                        builder23.setSmallIcon(R.drawable.ic_launcher_foreground);
+                        builder23.setAutoCancel(true);
+                        builder23.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
-                        builder.setContentTitle("Enclosure Alert");
-                        builder.setContentText(" Equipment; lamp and mister are on ");
-                        builder.setSmallIcon(R.drawable.ic_notify_pic);
-                        builder.setAutoCancel(true);
-                        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-
-                        managerCompat.notify(1,builder.build());
-
-                    }
-                }, begin16, timeinterval16);
+                        managerCompat23.notify(enc3.hashCode() ,builder23.build());
 
                 break;
 
